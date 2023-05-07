@@ -59,10 +59,9 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
         (eval $BUILD_GAPPS_COMMAND | tee $gapps_log_file)
         if [ $? -ne 0 ]; then
             logt "GApps build failed. Aborting."
+            telegram_send_file $gapps_log_file "GApps build log"
             exit 1
         fi
-        telegram_send_file $gapps_log_file "GApps build log"
-
     fi
     end_time_gapps=$(date +%s)
     gapps_time_taken=$(compute_build_time $start_time_gapps $end_time_gapps)
