@@ -43,13 +43,6 @@ jobs:
     environment: 
       name: Builder
     steps:
-      - name: Clean Everything and Start Fresh
-        if: ${{ inputs.fresh_install }}
-        run: find . -mindepth 1 -delete
-
-      - name: Clean Directory
-        if: ${{ inputs.clean_dir }}
-        run: rm -rf ${{ inputs.clean_dir }}
 
       - name: Checkout
         run: |
