@@ -23,14 +23,6 @@ fi
 
 start_time=$(date +%s)
 
-# Install dependencies
-resolve_dependencies | tee resolve_dependencies.log
-
-# Setup git
-git_setup $GIT_NAME $GIT_EMAIL
-
-# Cleanup old builds
-clean_build $RELEASE_OUT_DIR
 
 # Sync source
 logt "Syncing source..."
