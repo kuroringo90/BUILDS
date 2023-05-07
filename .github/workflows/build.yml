@@ -2,16 +2,16 @@ name: Build ROM
 
 on:
   workflow_dispatch:
-        inputs:
-         cleanstrategy:
-         description: 'Select Clean strategy'
-         required: true
-         default: 'nope'
-         type: choice
+    inputs:
+      cleanstrategy:
+        description: 'Select Clean strategy'
+        required: true
+        default: 'no'
+        type: choice
         options:
-        - nope
-        - installclean
-        - clobber
+          - nope
+          - installclean
+          - clobber
 
 env:
   RELEASE_GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
@@ -34,13 +34,13 @@ jobs:
       - name: Clean Strategy
         run: |
           cd ~/rising/
-          if [[ ${{ inputs.cleanstrategy }} == "installclean" ]]; then
+          if [[ ${{ github.event.inputs.cleanstrategy }} == "installclean" ]]; then
             echo "Make install clean"
             source build/envsetup.sh && lunch lineage_vayu-userdebug && make installclean
-          elif [[ ${{ inputs.cleanstrategy }} == "clobber" ]]; then
+          elif [[ ${{ github.event.inputs.cleanstrategy }} == "clobber" ]]; then
             echo "Make clobber"
             source build/envsetup.sh && lunch lineage_vayu-userdebug && make clobber
-          elif [[ ${{ inputs.cleanstrategy }} == "nope" ]]; then
+          elif [[ ${{ github.event.inputs.cleanstrategy }} == "nope" ]]; then
             echo "DIRTY BUILD"
           fi
 
@@ -72,4 +72,3 @@ jobs:
         with:
           name: Logs
           path: '*.log'
-
