@@ -32,7 +32,7 @@ RELEASE_FILES_PATTERN="*.zip|*.md5sum|*.sha256sum"
 #         },
 #     ]
 # }
-#REPOS_JSON="repos.json"
+REPOS_JSON="repos.json"
 
 # Required: Output directory for release files
 RELEASE_OUT_DIR="out/target/product/$DEVICE"
