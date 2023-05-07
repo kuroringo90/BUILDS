@@ -60,6 +60,7 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
             logt "GApps build failed. Aborting."
         fi
         telegram_send_file $gapps_log_file "GApps build log"
+        exit 1
     fi
     end_time_gapps=$(date +%s)
     gapps_time_taken=$(compute_build_time $start_time_gapps $end_time_gapps)
@@ -87,6 +88,7 @@ if [ -n "$BUILD_VANILLA_COMMAND" ]; then
             logt "Vanilla build failed. Aborting."
         fi
         telegram_send_file $vanilla_log_file "Vanilla build log"
+        exit 1
     fi
     end_time_vanilla=$(date +%s)
     vanilla_time_taken=$(compute_build_time $start_time_vanilla $end_time_vanilla)
