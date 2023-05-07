@@ -25,19 +25,22 @@ start_time=$(date +%s)
 
 
 # Sync source
-logt "Syncing source..."
-start_time_sync=$(date +%s)
-(eval  $SYNC_SOURCE_COMMAND | tee sync_source.log)
-if [ $? -ne 0 ]; then
+if [[ "${{ github.event.inputs.sync }}" == "true" ]]; then
+  logt "Syncing source..."
+  start_time_sync=$(date +%s)
+  eval "${SYNC_SOURCE_COMMAND}" | tee sync_source.log
+  if [ $? -ne 0 ]; then
     echo "Sync failed. Aborting."
     telegram_send_message "Sync failed. Aborting."
     telegram_send_file sync_source.log "Sync source log"
     exit 1
+  fi
+  end_time_sync=$(date +%s)
+  sync_time_taken=$(compute_build_time "$start_time_sync" "$end_time_sync")
+  logt "Sync completed in $sync_time_taken"
+else
+  telegram_send_message "Sync Skipped"
 fi
-end_time_sync=$(date +%s)
-sync_time_taken=$(compute_build_time $start_time_sync $end_time_sync)
-logt "Sync completed in $sync_time_taken"
-
 
 # Build GApps
 # if BUILDS_GAPPS_SCRIPT is set else skip
