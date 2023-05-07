@@ -16,11 +16,8 @@ on:
       sync:
         description: 'Select if sync'
         required: true
-        default: 'nope'
-        type: choice
-        options:
-          - nope
-          - yes
+        default: 'false'
+        type: boolean
 
 env:
   RELEASE_GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
