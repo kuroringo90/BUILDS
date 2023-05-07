@@ -2,12 +2,13 @@ name: Build ROM
 
 on:
   workflow_dispatch:
-    cleanstrategy:
-      description: 'Select Clean strategy'
-      required: true
-      default: 'no'
-      type: choice
-      options:
+        inputs:
+         cleanstrategy:
+         description: 'Select Clean strategy'
+         required: true
+         default: 'no'
+         type: choice
+        options:
         - nope
         - installclean
         - clobber
