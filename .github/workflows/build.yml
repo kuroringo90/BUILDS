@@ -12,6 +12,15 @@ on:
           - nope
           - installclean
           - clobber
+          
+      sync:
+        description: 'Select if sync'
+        required: true
+        default: 'nope'
+        type: choice
+        options:
+          - nope
+          - yes
 
 env:
   RELEASE_GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
