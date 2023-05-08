@@ -25,7 +25,7 @@ start_time=$(date +%s)
 
 
 # Sync source
-  if [[ "${SYNC_FLAG}" == "true" ]]; then
+  if [[ "$SYNC_FLAG" == "true" ]]; then
   logt "Syncing source..."
   start_time_sync=$(date +%s)
   eval "${SYNC_SOURCE_COMMAND}" | tee sync_source.log
