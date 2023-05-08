@@ -42,7 +42,19 @@ else
   telegram_send_message "Sync Skipped"
 fi
 
+# Clean strategy
+if [[ "$CLEAN" == "installclean" ]]; then
+   echo "Make install clean"
+   source build/envsetup.sh && lunch lineage_vayu-userdebug && make installclean
+    elif [[ ${{ github.event.inputs.cleanstrategy }} == "clobber" ]]; then
+        echo "Make clobber"
+        source build/envsetup.sh && lunch lineage_vayu-userdebug && make clobber
+    elif [[ ${{ github.event.inputs.cleanstrategy }} == "nope" ]]; then
+        echo "DIRTY BUILD"
+fi
+
 exit 1
+
 # Build GApps
 # if BUILDS_GAPPS_SCRIPT is set else skip
 if [ -n "$BUILD_GAPPS_COMMAND" ]; then
