@@ -53,8 +53,6 @@ if [[ "$CLEAN" == "installclean" ]]; then
         telegram_send_message "DIRTY BUILD"
 fi
 
-exit 1
-
 # Build GApps
 # if BUILDS_GAPPS_SCRIPT is set else skip
 if [ -n "$BUILD_GAPPS_COMMAND" ]; then
