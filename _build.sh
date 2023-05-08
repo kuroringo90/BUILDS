@@ -44,13 +44,13 @@ fi
 
 # Clean strategy
 if [[ "$CLEAN" == "installclean" ]]; then
-   echo "Make install clean"
+   telegram_send_message "Installclean"
    source build/envsetup.sh && lunch lineage_vayu-userdebug && make installclean
     elif [[ ${{ github.event.inputs.cleanstrategy }} == "clobber" ]]; then
-        echo "Make clobber"
+        telegram_send_message "Clobber"
         source build/envsetup.sh && lunch lineage_vayu-userdebug && make clobber
     elif [[ ${{ github.event.inputs.cleanstrategy }} == "nope" ]]; then
-        echo "DIRTY BUILD"
+        telegram_send_message "DIRTY BUILD"
 fi
 
 exit 1
