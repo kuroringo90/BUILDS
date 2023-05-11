@@ -95,33 +95,6 @@ else
     echo "BUILDS_GAPPS_COMMAND is not set. Skipping GApps build."
 fi
 
-# Build Vanilla
-# if BUILDS_VANILLA_SCRIPT is set else skip
-if [ -n "$BUILD_VANILLA_COMMAND" ]; then
-    start_time_vanilla=$(date +%s)
-    logt "Building vanilla..."
-    # if LOG_OUTPUT is set to false then don't log output
-    if [ "$LOG_OUTPUT" == "false" ]; then
-        (eval $BUILD_VANILLA_COMMAND)
-        if [ $? -ne 0 ]; then
-            logt "Vanilla build failed. Aborting."
-        fi
-    else
-        vanilla_log_file="vanilla_build.log"
-        (eval $BUILD_VANILLA_COMMAND | tee $vanilla_log_file)
-        if [ $? -ne 0 ]; then
-            logt "Vanilla build failed. Aborting."
-        fi
-        telegram_send_file $vanilla_log_file "Vanilla build log"
-    fi
-    end_time_vanilla=$(date +%s)
-    vanilla_time_taken=$(compute_build_time $start_time_vanilla $end_time_vanilla)
-    logt "Vanilla build completed in $vanilla_time_taken"
-    (remove_ota_package) # remove ota package if present
-else
-    echo "BUILDS_VANILLA_COMMAND is not set. Skipping vanilla build."
-fi
-
 # Release builds
 tag=$(date +'v%d-%m-%Y-%H%M')
 (github_release --token $RELEASE_GITHUB_TOKEN --repo $GITHUB_RELEASE_REPO --tag $tag --pattern $RELEASE_FILES_PATTERN)
