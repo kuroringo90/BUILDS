@@ -43,15 +43,29 @@ else
 fi
 
 # Clean strategy
+logt "Clean Strategy..."
+# Check if CLEAN is set to "installclean"
 if [[ "$CLEAN" == "installclean" ]]; then
-   telegram_send_message "Installclean"
-   source build/envsetup.sh && lunch lineage_vayu-userdebug && make installclean
-    elif [[ "$CLEAN" == "clobber" ]]; then
-        telegram_send_message "Clobber"
-        source build/envsetup.sh && lunch lineage_vayu-userdebug && make clobber
-    elif [[ "$CLEAN" == "nope" ]]; then
-        telegram_send_message "DIRTY BUILD"
+    telegram_send_message "Make Installclean"
+    source build/envsetup.sh && lunch lineage_vayu-userdebug && make installclean
+    if [ $? -ne 0 ]; then
+        telegram_send_message "Install Clean Failed. Aborting."
+        exit 1
+    fi
+# Check if CLEAN is set to "clobber"
+elif [[ "$CLEAN" == "clobber" ]]; then
+    telegram_send_message "Clobber"
+    source build/envsetup.sh && lunch lineage_vayu-userdebug && make clobber
+    if [ $? -ne 0 ]; then
+        telegram_send_message "Clobber Failed. Aborting."
+        exit 1
+    fi
+# Check if CLEAN is set to "nope"
+elif [[ "$CLEAN" == "nope" ]]; then
+    telegram_send_message "DIRTY BUILD"
 fi
+
+exit 1
 
 # Build GApps
 # if BUILDS_GAPPS_SCRIPT is set else skip
