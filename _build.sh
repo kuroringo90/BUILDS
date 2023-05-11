@@ -47,7 +47,7 @@ logt "Clean Strategy..."
 # Check if CLEAN is set to "installclean"
 if [[ "$CLEAN" == "installclean" ]]; then
     telegram_send_message "Make Installclean"
-    source build/envsetup.sh && lunch lineage_vayu-userdebug && make installclean
+    source build/envsetup.sh && lunch aosp_vayu-userdebug && make installclean
     if [ $? -ne 0 ]; then
         telegram_send_message "Install Clean Failed. Aborting."
         exit 1
@@ -55,7 +55,7 @@ if [[ "$CLEAN" == "installclean" ]]; then
 # Check if CLEAN is set to "clobber"
 elif [[ "$CLEAN" == "clobber" ]]; then
     telegram_send_message "Clobber"
-    source build/envsetup.sh && lunch lineage_vayu-userdebug && make clobber
+    source build/envsetup.sh && lunch aosp_vayu-userdebug && make clobber
     if [ $? -ne 0 ]; then
         telegram_send_message "Clobber Failed. Aborting."
         exit 1
