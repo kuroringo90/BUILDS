@@ -49,7 +49,7 @@ jobs:
 
       - name: Build
         run: |
-          cd ~/rising/
+          cd ~/blackiron/
           source __rom-build_scripts__/._env
           required_files=( _utils.sh _build.sh ._env $REPOS_JSON )
           rm -rf "${required_files[@]}"
