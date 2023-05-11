@@ -1,6 +1,6 @@
 # Required: Device codename
 DEVICE="vayu"
-ROM_NAME="BlakIron"
+ROM_NAME="VoidUI"
 
 # Required: git username
 GIT_NAME="kuroringo90"
