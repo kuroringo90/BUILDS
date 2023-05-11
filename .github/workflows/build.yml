@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Checkout
         run: |
-          cd ~/rising/
+          cd ~/blackiron/
           rm -rf __rom-build_scripts__
           git_branch=$(echo ${{ github.ref }} | sed 's/refs\/heads\///')
           echo "Branch: $git_branch"
