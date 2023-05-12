@@ -295,9 +295,9 @@ github_release() {
       echo "File release response: $file_release"
       return
     else
-      echo "File URL: $file_url"
-    fi
-    telegram_send_message "[$file]($file_url)" true
+      echo "GitHub URL: $file_url"
+      telegram_send_message "GitHub: [$file]($file_url)" true
+      fi
   done
 
   telegram_send_message "Uploaded files to [release $tag in $repo]($release_url)" true
