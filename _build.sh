@@ -97,31 +97,39 @@ else
 fi
 
 # Build Vanilla
-# if BUILDS_VANILLA_SCRIPT is set else skip
+# if BUILD_VANILLA_COMMAND is set, otherwise skip
 if [ -n "$BUILD_VANILLA_COMMAND" ]; then
     start_time_vanilla=$(date +%s)
     logt "Building vanilla..."
-    # if LOG_OUTPUT is set to false then don't log output
+    # if LOG_OUTPUT is set to false, then don't log output
     if [ "$LOG_OUTPUT" == "false" ]; then
-        (eval $BUILD_VANILLA_COMMAND)
+        eval "$BUILD_VANILLA_COMMAND"
         if [ $? -ne 0 ]; then
             logt "Vanilla build failed. Aborting."
+            exit 1
         fi
     else
         vanilla_log_file="vanilla_build.log"
-        (eval $BUILD_VANILLA_COMMAND | tee $vanilla_log_file)
+        eval "$BUILD_VANILLA_COMMAND" | tee "$vanilla_log_file"
         if [ $? -ne 0 ]; then
             logt "Vanilla build failed. Aborting."
+            telegram_send_file "$vanilla_log_file" "Vanilla build log"
+            exit 1
         fi
-        telegram_send_file $vanilla_log_file "Vanilla build log"
+        telegram_send_file "$vanilla_log_file" "Vanilla build log"
     fi
     end_time_vanilla=$(date +%s)
-    vanilla_time_taken=$(compute_build_time $start_time_vanilla $end_time_vanilla)
+    vanilla_time_taken=$(compute_build_time "$start_time_vanilla" "$end_time_vanilla")
     logt "Vanilla build completed in $vanilla_time_taken"
-    (remove_ota_package) # remove ota package if present
+    remove_ota_package # remove OTA package if present
+    if [ $? -ne 0 ]; then
+        logt "Failed to remove OTA package. Aborting."
+        exit 1
+    fi
 else
-    echo "BUILDS_VANILLA_COMMAND is not set. Skipping vanilla build."
+    echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla build."
 fi
+
 
 # Release builds
 tag=$(date +'v%d-%m-%Y-%H%M')
