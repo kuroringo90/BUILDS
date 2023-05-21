@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source _utils.sh
-source ._env # remove this line if you want to environment variables to be set in the shell or use a different method to set them
+source ._env # remove this line if you want environment variables to be set in the shell or use a different method to set them
 
 # Check if required variables are set
 req_vars=("DEVICE" "ROM_NAME" "GIT_NAME" "GIT_EMAIL" "REPOS_JSON"  "SYNC_SOURCE_COMMAND" "RELEASE_GITHUB_TOKEN" "GITHUB_RELEASE_REPO" "RELEASE_OUT_DIR" "RELEASE_FILES_PATTERN")
@@ -23,22 +23,22 @@ fi
 
 start_time=$(date +%s)
 
-
 # Sync source
-  if [[ "$SYNC_FLAG" == "true" ]]; then
-  logt "Syncing source..."
-  start_time_sync=$(date +%s)
-  eval "${SYNC_SOURCE_COMMAND}" | tee sync_source.log
-  if [ $? -ne 0 ]; then
-    echo "Sync failed. Aborting."
-    telegram_send_message "Sync failed. Aborting."
-    telegram_send_file sync_source.log "Sync source log"
-    exit 1
-  fi
-  end_time_sync=$(date +%s)
-  sync_time_taken=$(compute_build_time "$start_time_sync" "$end_time_sync")
-  logt "Sync completed in $sync_time_taken"
-  
+if [[ "$SYNC_FLAG" == "true" ]]; then
+    logt "Syncing source..."
+    start_time_sync=$(date +%s)
+    eval "${SYNC_SOURCE_COMMAND}" | tee sync_source.log
+    if [ $? -ne 0 ]; then
+        echo "Sync failed. Aborting."
+        telegram_send_message "Sync failed. Aborting."
+        telegram_send_file sync_source.log "Sync source log"
+        exit 1
+    fi
+    end_time_sync=$(date +%s)
+    sync_time_taken=$(compute_build_time "$start_time_sync" "$end_time_sync")
+    logt "Sync completed in $sync_time_taken"
+fi
+
 # Clean strategy
 logt "Clean Strategy..."
 # Check if CLEAN is set to "installclean"
@@ -130,18 +130,19 @@ else
     echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla build."
 fi
 
-
 # Release builds
 tag=$(date +'v%d-%m-%Y-%H%M')
 (github_release --token $RELEASE_GITHUB_TOKEN --repo $GITHUB_RELEASE_REPO --tag $tag --pattern $RELEASE_FILES_PATTERN)
 if [ $? -ne 0 ]; then
     logt "Releasing builds failed. Aborting."
+    exit 1
 fi
 
 end_time=$(date +%s)
-# convert seconds to hours, minutes and seconds
-time_taken=$(compute_build_time $start_time $end_time)
+# convert seconds to hours, minutes, and seconds
+time_taken=$(compute_build_time "$start_time" "$end_time")
 telegram_send_message "Total time taken *$time_taken*"
 echo "Total time taken $time_taken"
 
 logt "Build finished."
+
