@@ -70,19 +70,19 @@ fi
 if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     start_time_gapps=$(date +%s)
     gapps_log_file="gapps_build.log"
-    logt "Building GApps..."
+    logt "Building Vanilla..."
     # if LOG_OUTPUT is set to false then don't log output
     if [ "$LOG_OUTPUT" == "false" ]; then
         (eval $BUILD_GAPPS_COMMAND)
         if [ $? -ne 0 ]; then
-            logt "GApps build failed. Aborting."
+            logt "Vanilla build failed. Aborting."
             exit 1
         fi
     else
         (eval $BUILD_GAPPS_COMMAND | tee $gapps_log_file)
         if [ $? -ne 0 ]; then
-            logt "GApps build failed. Aborting."
-            telegram_send_file $gapps_log_file "GApps build log"
+            logt "Vanilla build failed. Aborting."
+            telegram_send_file $gapps_log_file "vanilla build log"
             exit 1
         fi
         telegram_send_file $gapps_log_file "GApps build log"
