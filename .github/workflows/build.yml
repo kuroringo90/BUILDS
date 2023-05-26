@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Checkout
         run: |
-          cd ~/rising/
+          cd ~/miku/
           rm -rf __rom-build_scripts__
           git_branch=$(echo ${{ github.ref }} | sed 's/refs\/heads\///')
           echo "Branch: $git_branch"
@@ -49,7 +49,7 @@ jobs:
 
       - name: Build
         run: |
-          cd ~/rising/
+          cd ~/miku/
           source __rom-build_scripts__/._env
           required_files=( _utils.sh _build.sh ._env $REPOS_JSON )
           rm -rf "${required_files[@]}"
