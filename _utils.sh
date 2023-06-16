@@ -367,9 +367,12 @@ telegram_edit_message() {
 
 progress() {
     local BUILDLOG="$1"
-    local progress_message_id="$2"
     echo "BOTLOG: Build tracker process is running..."
     sleep 10
+
+    # Send the initial Telegram message and save message_id
+    local progress_message_id=$(telegram_send_message "Building GApps ... 0%")
+    echo "DEBUG: progress_message_id is $progress_message_id"  # Debug line
 
     while [ 1 ]; do
         if [[ $? -ne 0 ]]; then
@@ -388,6 +391,10 @@ progress() {
                     telegram_edit_message "Building ... ${NUMBER}% " $progress_message_id
                 fi
                 NUMBER_OLD=${NUMBER}
+            fi
+            if [ "$NUMBER" -eq "99" ] && [ "$NUMBER" != "" ] && ! cat $BUILDLOG | tail  -n 1 | grep "glob" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "including" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "soong" > /dev/null && ! cat $BUILDLOG | tail -n 1 | grep "finishing" > /dev/null; then
+                echo "BOTLOG: Build tracker process ended"
+                break
             fi
         fi
         sleep 10
