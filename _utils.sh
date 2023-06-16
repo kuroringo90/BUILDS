@@ -372,6 +372,7 @@ progress() {
 
     # Send the initial Telegram message and save message_id
     local progress_message_id=$(telegram_send_message "Building GApps ... 0%")
+    echo "$progress_message_id"  # This output can be captured when function is called
     echo "DEBUG: progress_message_id is $progress_message_id"  # Debug line
 
     while [ 1 ]; do
@@ -401,6 +402,9 @@ progress() {
     done
     return 0
 }
+
+This function sends an initial message to Telegram indicating the start of the build process and updates this message as the build progresses. When the build is near completion (at 99%), the function stops updating the message and exits. The message ID from Telegram is outputted at the beginning of the function, which can be captured when this function is called in your main script.
+
 
 # Export functions
 export -f resolve_dependencies git_setup git_clone git_clone_json clean_build github_release telegram_send_message telegram_send_file update_tg logt progress telegram_edit_message
