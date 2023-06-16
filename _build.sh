@@ -76,13 +76,14 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     fi
     BUILD_PID=$!
 
-    # Start progress function in the background
-    progress "$gapps_log_file" &
-    PROGRESS_PID=$!
+    # Start progress function in the background and get the message_id
+    progress_output=$(progress "$gapps_log_file")
+    progress_message_id=$(echo "$progress_output" | head -n1)
+    echo "DEBUG: progress_message_id is $progress_message_id"  
 
     # Wait for the build process to complete
     wait $BUILD_PID
-    build_status=$?
+    build_status=${PIPESTATUS[0]}
 
     # Stop the progress function
     kill $PROGRESS_PID
@@ -98,9 +99,7 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
     logt "GApps build completed in $gapps_time_taken"
     
-    # At this point, the message_id is known within the `progress` function, 
-    # but not in this scope, so you might want to retrieve it or structure 
-    # your code differently to know it here if you want to edit the final message.
+    telegram_edit_message "GApps build completed in $gapps_time_taken." $progress_message_id
     
     remove_ota_package # remove OTA package if present
     if [ $? -ne 0 ]; then
@@ -110,7 +109,6 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
 else
     echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
 fi
-
 
 # Build Vanilla
 # if BUILD_VANILLA_COMMAND is set, otherwise skip
