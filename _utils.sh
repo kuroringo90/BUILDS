@@ -19,17 +19,11 @@ telegram_send_message() {
   local send_message_response=$(curl -s "https://api.telegram.org/bot$token/sendMessage" -d chat_id="$chat" -d text="$message" -d parse_mode=MARKDOWN -d disable_web_page_preview="$disable_web_page_preview")
   if [ "$(echo "$send_message_response" | jq -r '.ok')" == "true" ]; then
     echo "Message sent to Telegram."
-    echo "$send_message_response" | jq '.result.message_id'
+    # Extract the message_id and output it
+    echo "$send_message_response" | jq -r '.result.message_id'
   else
     echo "Error sending message to Telegram."
   fi
-    # Print the response to stdout
-    echo "$send_message_response"
-
-    # Extract and print the message_id
-    local message_id=$(echo "$send_message_response" | jq -r '.result.message_id')
-    echo "Message ID: $message_id"
-    
 }
 
 telegram_send_file() {
