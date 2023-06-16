@@ -75,16 +75,17 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
         eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file" &
     fi
     BUILD_PID=$!
-    # Start progress function and save message_id
-    progress_message_id=$(telegram_send_message "Building GApps ... 0%")
-    echo "DEBUG: progress_message_id is $progress_message_id"  
-    progress "$gapps_log_file" $progress_message_id &
+
+    # Start progress function in the background
+    progress "$gapps_log_file" &
     PROGRESS_PID=$!
 
+    # Wait for the build process to complete
     wait $BUILD_PID
     build_status=$?
 
-    kill $PROGRESS_PID # Stop the progress function
+    # Stop the progress function
+    kill $PROGRESS_PID
     wait $PROGRESS_PID 2>/dev/null
 
     if [ $build_status -ne 0 ]; then
@@ -92,10 +93,15 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
         telegram_send_file "$gapps_log_file" "GApps build log"
         exit 1
     fi
+
     end_time_gapps=$(date +%s)
     gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
     logt "GApps build completed in $gapps_time_taken"
-    telegram_edit_message "GApps build completed in $gapps_time_taken." $progress_message_id
+    
+    # At this point, the message_id is known within the `progress` function, 
+    # but not in this scope, so you might want to retrieve it or structure 
+    # your code differently to know it here if you want to edit the final message.
+    
     remove_ota_package # remove OTA package if present
     if [ $? -ne 0 ]; then
         logt "Failed to remove OTA package. Aborting."
