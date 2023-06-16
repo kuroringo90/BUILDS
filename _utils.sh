@@ -363,7 +363,8 @@ telegram_edit_message() {
 }
 
 progress() {
-    local BUILDLOG="$@"
+    local BUILDLOG="$1"
+    local progress_message_id="$2"
     echo "BOTLOG: Build tracker process is running..."
     sleep 10
 
