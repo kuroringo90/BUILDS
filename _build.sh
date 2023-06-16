@@ -63,28 +63,29 @@ elif [[ "$CLEAN" == "nope" ]]; then
 fi
 
 # Build GApps
+# if BUILD_GAPPS_COMMAND is set, otherwise skip
 if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     start_time_gapps=$(date +%s)
     gapps_log_file="gapps_build.log"
     logt "Building GApps..."
-    
-    # Start the progress tracking in the background before the build
-    progress "$gapps_log_file" &
-    PROGRESS_PID=$!
-    
     # if LOG_OUTPUT is set to false, then don't log output
     if [ "$LOG_OUTPUT" == "false" ]; then
-        eval "$BUILD_GAPPS_COMMAND"
-        build_status=$?
+        eval "$BUILD_GAPPS_COMMAND" > "$gapps_log_file" 2>&1 &
     else
-        eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"
-        build_status=${PIPESTATUS[0]}
+        eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file" &
     fi
+    BUILD_PID=$!
+    # Start progress function and save message_id
+    progress_message_id=$(telegram_send_message "Building GApps ... 0%")
+    progress "$gapps_log_file" $progress_message_id &
+    PROGRESS_PID=$!
 
-    # kill progress tracking when build finishes
-    kill $PROGRESS_PID
-    
-    # Handle build failure
+    wait $BUILD_PID
+    build_status=$?
+
+    kill $PROGRESS_PID # Stop the progress function
+    wait $PROGRESS_PID 2>/dev/null
+
     if [ $build_status -ne 0 ]; then
         logt "GApps build failed. Aborting."
         telegram_send_file "$gapps_log_file" "GApps build log"
@@ -101,6 +102,7 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
 else
     echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
 fi
+
 
 # Build Vanilla
 # if BUILD_VANILLA_COMMAND is set, otherwise skip
