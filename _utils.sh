@@ -389,10 +389,6 @@ progress() {
                 fi
                 NUMBER_OLD=${NUMBER}
             fi
-            if [ "$NUMBER" -eq "99" ] && [ "$NUMBER" != "" ] && ! cat $BUILDLOG | tail  -n 1 | grep "glob" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "including" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "soong" > /dev/null && ! cat $BUILDLOG | tail -n 1 | grep "finishing" > /dev/null; then
-                echo "BOTLOG: Build tracker process ended"
-                break
-            fi
         fi
         sleep 10
     done
