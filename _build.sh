@@ -61,20 +61,17 @@ elif [[ "$CLEAN" == "clobber" ]]; then
 elif [[ "$CLEAN" == "nope" ]]; then
     telegram_send_message "DIRTY BUILD"
 fi
-# Build GApps
-# if BUILD_GAPPS_COMMAND is set, otherwise skip
 if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     start_time_gapps=$(date +%s)
     gapps_log_file="gapps_build.log"
     logt "Building GApps..."
-    
+
     eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"
     build_status=${PIPESTATUS[0]}
 
     # Extract progress from gapps_log_file
-    progress=$(grep -o '\[ *[0-9]*% *[0-9]*/[0-9]*]' "$gapps_log_file" | tail -n 1)
-    telegram_send_message "Building GApps ... 0"
-    progress_message_id=$(telegram_send_message "Building GApps ... 0")
+    progress=$(grep -o '\[ *[0-9]*% *[0-9]*\/[0-9]*\]' "$gapps_log_file" | tail -n 1 | sed 's/\[\|\]//g')
+    progress_message_id=$(telegram_send_message "Building GApps ... $progress")
     echo "DEBUG: progress_message_id is $progress_message_id"  # Debug line
     telegram_update_message "$progress_message_id" "Building GApps ... $progress"
 
@@ -95,9 +92,7 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
 
 else
     echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
-fi
-
-# Build Vanilla
+fi# Build Vanilla
 # if BUILD_VANILLA_COMMAND is set, otherwise skip
 if [ -n "$BUILD_VANILLA_COMMAND" ]; then
     start_time_vanilla=$(date +%s)
