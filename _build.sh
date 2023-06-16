@@ -70,10 +70,10 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     logt "Building GApps..."
     # if LOG_OUTPUT is set to false, then don't log output
  if [ "$LOG_OUTPUT" == "false" ]; then
-    eval "$BUILD_GAPPS_COMMAND"
+    eval "$BUILD_GAPPS_COMMAND" &> "$gapps_log_file" & progress $gapps_log_file &
     build_status=$?
       else
-    eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"
+    eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file" & progress $gapps_log_file &
     build_status=${PIPESTATUS[0]}
 fi
 
