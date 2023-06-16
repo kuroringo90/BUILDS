@@ -61,27 +61,28 @@ elif [[ "$CLEAN" == "clobber" ]]; then
 elif [[ "$CLEAN" == "nope" ]]; then
     telegram_send_message "DIRTY BUILD"
 fi
-
 # Build GApps
 # if BUILD_GAPPS_COMMAND is set, otherwise skip
 if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     start_time_gapps=$(date +%s)
     gapps_log_file="gapps_build.log"
     logt "Building GApps..."
-    # if LOG_OUTPUT is set to false, then don't log output
- if [ "$LOG_OUTPUT" == "false" ]; then
-    eval "$BUILD_GAPPS_COMMAND"
-    build_status=$?
-      else
+    
     eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"
     build_status=${PIPESTATUS[0]}
-fi
 
-if [ $build_status -ne 0 ]; then
-    logt "GApps build failed. Aborting."
-    telegram_send_file "$gapps_log_file" "GApps build log"
-    exit 1
-fi
+    # Extract progress from gapps_log_file
+    progress=$(grep -o '\[ *[0-9]*% *[0-9]*/[0-9]*]' "$gapps_log_file" | tail -n 1)
+    progress_message_id=$(telegram_send_message "Building GApps ... 0")
+    echo "DEBUG: progress_message_id is $progress_message_id"  # Debug line
+    telegram_update_message "$progress_message_id" "Building GApps ... $progress"
+
+    if [ $build_status -ne 0 ]; then
+        logt "GApps build failed. Aborting."
+        telegram_send_file "$gapps_log_file" "GApps build log"
+        exit 1
+    fi
+
     end_time_gapps=$(date +%s)
     gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
     logt "GApps build completed in $gapps_time_taken"
@@ -90,6 +91,7 @@ fi
         logt "Failed to remove OTA package. Aborting."
         exit 1
     fi
+
 else
     echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
 fi
