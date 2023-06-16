@@ -71,6 +71,7 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
 
     # Extract progress from gapps_log_file
     progress=$(grep -o '\[ *[0-9]*% *[0-9]*\/[0-9]*\]' "$gapps_log_file" | tail -n 1 | sed 's/\[\|\]//g')
+    telegram_send_message "Building GApps ... $progress
     progress_message_id=$(telegram_send_message "Building GApps ... $progress")
     echo "DEBUG: progress_message_id is $progress_message_id"  # Debug line
     telegram_update_message "$progress_message_id" "Building GApps ... $progress"
