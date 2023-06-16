@@ -337,6 +337,49 @@ remove_ota_package() {
     echo "No OTA package found to remove."
   fi
 }
+# New function to edit an existing Telegram message
+telegram_edit_message() {
+    local text="$1"
+    local message_id="$2"
+    local parse_mode=${3:-markdown}
+    local chat_id=${4:-${TELEGRAM_CHAT_ID}}
+    local url="https://api.telegram.org/bot${TELEGRAM_TOKEN}/editMessageText"
+
+    curl -s -X POST $url -d chat_id=$chat_id -d message_id=$message_id -d text="$text" -d parse_mode=$parse_mode
+}
+
+progress() {
+    local BUILDLOG="$@"
+    echo "BOTLOG: Build tracker process is running..."
+    sleep 10
+
+    while [ 1 ]; do
+        if [[ $? -ne 0 ]]; then
+            exit $?
+        fi
+
+        # Get latest percentage
+        PERCENTAGE=$(cat $BUILDLOG | tail -n 1 | awk '{ print $2 }')
+        NUMBER=$(echo ${PERCENTAGE} | sed 's/[^0-9]*//g')
+
+        # Report percentage to the $CHAT_ID
+        if [ "${NUMBER}" != "" ]; then
+            if [ "${NUMBER}" -le  "99" ]; then
+                if [ "${NUMBER}" != "${NUMBER_OLD}" ] && [ "$NUMBER" != "" ] && ! cat $BUILDLOG | tail  -n 1 | grep "glob" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "including" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "soong" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "finishing" > /dev/null; then
+                    echo "BOTLOG: Percentage changed to ${NUMBER}%"
+                    telegram_edit_message "Building ... ${NUMBER}% [$ROM_NAME for $DEVICE]($GITHUB_RUN_URL)" $progress_message_id
+                fi
+                NUMBER_OLD=${NUMBER}
+            fi
+            if [ "$NUMBER" -eq "99" ] && [ "$NUMBER" != "" ] && ! cat $BUILDLOG | tail  -n 1 | grep "glob" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "including" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "soong" > /dev/null && ! cat $BUILDLOG | tail -n 1 | grep "finishing" > /dev/null; then
+                echo "BOTLOG: Build tracker process ended"
+                break
+            fi
+        fi
+        sleep 10
+    done
+    return 0
+}
 
 # Export functions
-export -f resolve_dependencies git_setup git_clone git_clone_json clean_build github_release telegram_send_message telegram_send_file update_tg logt
+export -f resolve_dependencies git_setup git_clone git_clone_json clean_build github_release telegram_send_message telegram_send_file update_tg logt progress telegram_edit_message
