@@ -391,7 +391,7 @@ progress() {
             if [ "${NUMBER}" -le  "99" ]; then
                 if [ "${NUMBER}" != "${NUMBER_OLD}" ] && [ "$NUMBER" != "" ] && ! cat $BUILDLOG | tail  -n 1 | grep "glob" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "including" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "soong" > /dev/null && ! cat $BUILDLOG | tail  -n 1 | grep "finishing" > /dev/null; then
                     echo "BOTLOG: Percentage changed to ${NUMBER}%"
-                    telegram_edit_message "Building ... " $progress_message_id
+                    telegram_edit_message "Building ... ${NUMBER}% " $progress_message_id
                 fi
                 NUMBER_OLD=${NUMBER}
             fi
