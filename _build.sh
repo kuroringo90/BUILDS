@@ -92,7 +92,9 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
 
 else
     echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
-fi# Build Vanilla
+fi
+
+# Build Vanilla
 # if BUILD_VANILLA_COMMAND is set, otherwise skip
 if [ -n "$BUILD_VANILLA_COMMAND" ]; then
     start_time_vanilla=$(date +%s)
