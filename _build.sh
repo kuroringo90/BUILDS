@@ -77,6 +77,7 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     BUILD_PID=$!
     # Start progress function and save message_id
     progress_message_id=$(telegram_send_message "Building GApps ... 0%")
+    echo "DEBUG: progress_message_id is $progress_message_id"  
     progress "$gapps_log_file" $progress_message_id &
     PROGRESS_PID=$!
 
