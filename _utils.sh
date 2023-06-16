@@ -337,15 +337,29 @@ remove_ota_package() {
     echo "No OTA package found to remove."
   fi
 }
-# New function to edit an existing Telegram message
-telegram_edit_message() {
-    local text="$1"
-    local message_id="$2"
-    local parse_mode=${3:-markdown}
-    local chat_id=${4:-${TG_CHAT}}
-    local url="https://api.telegram.org/bot${TG_TOKEN}/editMessageText"
 
-    curl -s -X POST $url -d chat_id=$chat_id -d message_id=$message_id -d text="$text" -d parse_mode=$parse_mode
+telegram_edit_message() {
+  # use environment variables
+  local token=$TG_TOKEN
+  local chat=$TG_CHAT
+  local message_id=$1
+  local new_message=$2 
+
+  if [ -z "$token" ] || [ -z "$chat" ] || [ -z "$message_id" ]; then
+    return
+  fi
+
+  if [ -z "$new_message" ]; then
+    echo "No new message passed. Aborting."
+    return
+  fi
+
+  local edit_message_response=$(curl -s -X POST "https://api.telegram.org/bot$token/editMessageText" -d chat_id="$chat" -d message_id="$message_id" -d text="$new_message" -d parse_mode=MARKDOWN)
+  if [ "$(echo "$edit_message_response" | jq -r '.ok')" == "true" ]; then
+    echo "Message updated on Telegram."
+  else
+    echo "Error updating message on Telegram."
+  fi
 }
 
 progress() {
