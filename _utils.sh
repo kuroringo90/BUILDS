@@ -342,8 +342,8 @@ telegram_edit_message() {
     local text="$1"
     local message_id="$2"
     local parse_mode=${3:-markdown}
-    local chat_id=${4:-${TELEGRAM_CHAT_ID}}
-    local url="https://api.telegram.org/bot${TELEGRAM_TOKEN}/editMessageText"
+    local chat_id=${4:-${TG_CHAT}}
+    local url="https://api.telegram.org/bot${TG_TOKEN}/editMessageText"
 
     curl -s -X POST $url -d chat_id=$chat_id -d message_id=$message_id -d text="$text" -d parse_mode=$parse_mode
 }
