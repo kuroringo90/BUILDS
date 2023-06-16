@@ -365,4 +365,4 @@ remove_ota_package() {
 }
 
 # Export functions
-export -f resolve_dependencies git_setup git_clone git_clone_json clean_build github_release telegram_send_message telegram_send_file update_tg logt
+export -f resolve_dependencies git_setup git_clone git_clone_json clean_build github_release telegram_send_message telegram_send_file update_tg logt telegram_update_message
