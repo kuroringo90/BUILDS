@@ -94,6 +94,7 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     end_time_gapps=$(date +%s)
     gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
     logt "GApps build completed in $gapps_time_taken"
+    telegram_edit_message "GApps build completed in $gapps_time_taken." $progress_message_id
     remove_ota_package # remove OTA package if present
     if [ $? -ne 0 ]; then
         logt "Failed to remove OTA package. Aborting."
