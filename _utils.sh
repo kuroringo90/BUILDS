@@ -26,6 +26,30 @@ telegram_send_message() {
   fi
 }
 
+telegram_update_message() {
+  local token=$TG_TOKEN
+  local chat=$TG_CHAT
+  local message_id=$1
+  local text=$2
+
+  if [ -z "$token" ] || [ -z "$chat" ] || [ -z "$message_id" ]; then
+    echo "Missing required parameters. Aborting."
+    return
+  fi
+
+  if [ -z "$text" ]; then
+    echo "No text passed. Aborting."
+    return
+  fi
+
+  local edit_message_response=$(curl -s "https://api.telegram.org/bot$token/editMessageText" -d chat_id="$chat" -d message_id="$message_id" -d text="$text" -d parse_mode=MARKDOWN)
+  if [ "$(echo "$edit_message_response" | jq -r '.ok')" == "true" ]; then
+    echo "Message updated in Telegram."
+  else
+    echo "Error updating message in Telegram."
+  fi
+}
+
 telegram_send_file() {
   # use environment variables
   local token=$TG_TOKEN
