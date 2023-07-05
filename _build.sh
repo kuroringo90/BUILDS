@@ -10,7 +10,7 @@ if [ "$#" -gt 0 ];
 			case $i in
 				--skip-abort | -sa)
 					SKIP_ABORT="TRUE"
-					shift 0
+					shift 1
 					;;
 			esac
 		done
