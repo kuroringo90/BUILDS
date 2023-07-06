@@ -8,9 +8,20 @@ if [ "$#" -gt 0 ];
 		for i in $@
 		do
 			case $i in
+				--debug | -d)
+					utils_debugging --on
+					;;
 				--skip-abort | -sa)
 					SKIP_ABORT="TRUE"
 					shift 1
+					;;
+				--help | -h)
+					echo -e "\n${CLR_BOLD}${CLR_UNDERLINE}< $(basename $0) > : HELP${CLR_RESET}\n\n--skip-abort / -sa : Use the flag if you want to abort building rom if one of the build type fails.\n\n--help / -h : This flag displays help\n\n--debugging / -d : This flag turns on debugging mode (wip)"
+					exit 0
+					;;
+					--* | -*)
+					echo "< $(basename $0) > : Invalid Argument $i !" 1>&2
+					exit 0
 					;;
 			esac
 		done

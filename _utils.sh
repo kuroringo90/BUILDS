@@ -1,5 +1,61 @@
 #!/bin/bash
-
+# Some formatting stuff
+CLR_BOLD="\e[1m"
+CLR_RESET="\E[0m"
+CLR_UNDERLINE="\e[4m"
+#####
+# Debug
+utils_debugging () {
+# Default values
+local log_fd=69 # fd 69 good
+local log_fname="$(date +%d-%m-%y)_build.log"
+	if [ "$#" -gt 0 ];
+		then
+			for i in $@
+				do
+					case $i in
+						--on | -o)
+								local log_status="true"
+								shift 1
+						;;
+						--file-descriptor | -fd)
+						if [ -n "${2}" ] && [[ ${2} =~ [0-9]* ]]
+							then
+								local log_fd={$2}
+								shift 2
+							else
+								echo "${FUNCNAME[0]} > : Invalid fd arg" 1>&2
+								return
+						fi
+						;;
+						--log-filename | -lf)
+							if [ -n "${2}" ];
+								then
+									local log_fname="${2}"
+								else
+									echo "${FUNCNAME[0]} > : Filename empty" 1>&2
+							fi
+						;;
+						--* | -*)
+						echo "Invalid option $i !"
+						;;
+					esac
+				done
+	fi
+	if [ "$log_status" == "true" ];
+		then
+		# First of all have to remember not to close fd
+		trap "exec ${log_fd}>&-" EXIT
+		# Open fd
+		exec ${log_fd}>$(dirname "$0")/${log_fname}
+		# Now we have to set xtrace fd 
+		BASH_XTRACEFD=${log_fd}
+		# Now set PS4 var to umm contain line number
+		PS4="Line $LINENO > : "
+		# Now set xtrace debugging mode to true
+		set -x
+	fi
+}
 telegram_send_message() {
   # use environment variables
   local token=$TG_TOKEN
