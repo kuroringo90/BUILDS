@@ -110,7 +110,7 @@ if [ $build_status -ne 0 ]; then
     logt "[ ! ] $? | GApps build failed."
     telegram_send_file "$gapps_log_file" "GApps build log"
        if [ ! "$SKIP_ABORT" == "TRUE" ]; then exit 1; fi
-fi
+       else
     end_time_gapps=$(date +%s)
     gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
     logt "GApps build completed in $gapps_time_taken"
@@ -118,6 +118,7 @@ fi
     if [ $? -ne 0 ]; then
         logt "Failed to remove OTA package. Aborting."
         exit 1
+fi
     fi
 else
     echo "[ ? ] BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
@@ -143,15 +144,16 @@ if [ $build_status -ne 0 ]; then
     logt "[ ! ] $? | Vanilla build failed."
     telegram_send_file "$vanilla_log_file" "Vanilla build log"
    if [ ! "$SKIP_ABORT" == "TRUE" ]; then exit 1; fi
-fi
+   else
     end_time_vanilla=$(date +%s)
     vanilla_time_taken=$(compute_build_time "$start_time_vanilla" "$end_time_vanilla")
     logt "Vanilla build completed in $vanilla_time_taken"
-    # remove OTA package if present
-    if ! remove_ota_package; then
+    remove_ota_package # remove OTA package if present
+    if [ ! "$?" -eq 0 ]; then
         logt "Failed to remove OTA package. Aborting."
         exit 1
     fi
+fi
 else
     echo "[ ? ] BUILD_VANILLA_COMMAND is not set. Skipping vanilla build."
 fi
