@@ -8,15 +8,15 @@ if [ "$#" -gt 0 ];
 		for i in $@
 		do
 			case $i in
-				--debug | -d)
-					utils_debugging --on
+				--no-debug | -nd)
+					SCRIPT_NO_DEBUG="TRUE"
 					;;
 				--skip-abort | -sa)
 					SKIP_ABORT="TRUE"
 					shift 1
 					;;
 				--help | -h)
-					echo -e "\n${CLR_BOLD}${CLR_UNDERLINE}< $(basename $0) > : HELP${CLR_RESET}\n\n--skip-abort / -sa : Use the flag if you want to abort building rom if one of the build type fails.\n\n--help / -h : This flag displays help\n\n--debugging / -d : This flag turns on debugging mode (wip)"
+					echo -e "\n${CLR_BOLD}${CLR_UNDERLINE}< $(basename $0) > : HELP${CLR_RESET}\n\n--skip-abort / -sa : Use the flag if you want to abort building rom if one of the build type fails.\n\n--help / -h : This flag displays help\n\n--no-debug / -nd : This flag turns off debugging mode (wip)"
 					exit 0
 					;;
 					--* | -*)
@@ -25,6 +25,11 @@ if [ "$#" -gt 0 ];
 					;;
 			esac
 		done
+fi
+# Debug output is on by default
+if [ "$SCRIPT_NO_DEBUG" != "TRUE" ];
+	then
+		utils_debugging	
 fi
 # Check if required variables are set
 req_vars=("DEVICE" "ROM_NAME" "GIT_NAME" "GIT_EMAIL" "REPOS_JSON"  "SYNC_SOURCE_COMMAND" "RELEASE_GITHUB_TOKEN" "GITHUB_RELEASE_REPO" "RELEASE_OUT_DIR" "RELEASE_FILES_PATTERN")
@@ -38,7 +43,7 @@ done
 telegram_send_message "⏳"
 telegram_send_message "*Build Initiated*: [$ROM_NAME for $DEVICE]($GITHUB_RUN_URL)" true
 # This is very messy to read
-telegram_send_message "*Build type*: $(if [ -n "$BUILD_VANILLA_COMMAND" ] && [ -n "$BUILD_GAPPS_COMMAND" ]; then echo "GAPPS + VANILLA"; elif [ -n "$BUILD_VANILLA_COMMAND" ]; then echo "VANILLA"; elif [ -n "$BUILD_GAPPS_COMMAND" ]; then echo "GAPPS"; fi)"
+telegram_send_message "*Build type*: $(if [ -n "$BUILD_VANILLA_COMMAND" ] && [ -n "$BUILD_GAPPS_COMMAND" ]; then echo 'GAPPS + VANILLA'; elif [ -n "$BUILD_VANILLA_COMMAND" ]; then echo "VANILLA"; elif [ -n "$BUILD_GAPPS_COMMAND" ]; then echo "GAPPS"; fi)"
 # Check either BUILD_VANILLA_COMMAND or BUILD_GAPPS_COMMAND is set
 if [ -z "$BUILD_VANILLA_COMMAND" ] && [ -z "$BUILD_GAPPS_COMMAND" ]; then
     logt "Either BUILD_VANILLA_COMMAND or BUILD_GAPPS_COMMAND is not set. Please set it in ._env"
@@ -97,7 +102,7 @@ if [ -n "$BUILD_GAPPS_COMMAND" ]; then
     eval "$BUILD_GAPPS_COMMAND"
     build_status=$?
       else
-  		  $BUILD_GAPPS_COMMAND | tee "$gapps_log_file"
+  		  eval $BUILD_GAPPS_COMMAND | tee "$gapps_log_file"
   		  build_status=${PIPESTATUS[0]}
 fi
 
@@ -127,10 +132,10 @@ if [ -n "$BUILD_VANILLA_COMMAND" ]; then
     # if LOG_OUTPUT is set to false, then don't log output
 if [ "$LOG_OUTPUT" == "false" ]; then
 	# we
-    $BUILD_VANILLA_COMMAND
+    eval $BUILD_VANILLA_COMMAND
     build_status=$?
 else
-    $BUILD_VANILLA_COMMAND | tee "$vanilla_log_file"
+    eval $BUILD_VANILLA_COMMAND | tee "$vanilla_log_file"
     build_status=${PIPESTATUS[0]}
 fi
 

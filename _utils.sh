@@ -7,6 +7,7 @@ CLR_UNDERLINE="\e[4m"
 # Debug
 utils_debugging () {
 # Default values
+local log_status="true"
 local log_fd=69 # fd 69 good
 local log_fname="$(date +%d-%m-%y)_build.log"
 	if [ "$#" -gt 0 ];
@@ -14,14 +15,10 @@ local log_fname="$(date +%d-%m-%y)_build.log"
 			for i in $@
 				do
 					case $i in
-						--on | -o)
-								local log_status="true"
-								shift 1
-						;;
 						--file-descriptor | -fd)
 						if [ -n "${2}" ] && [[ ${2} =~ [0-9]* ]]
 							then
-								local log_fd={$2}
+								local log_fd=${2}
 								shift 2
 							else
 								echo "${FUNCNAME[0]} > : Invalid fd arg" 1>&2
