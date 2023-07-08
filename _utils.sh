@@ -4,7 +4,13 @@ CLR_BOLD="\e[1m"
 CLR_RESET="\E[0m"
 CLR_UNDERLINE="\e[4m"
 #####
-# Debug
+# Utils Debug
+#### <USAGE> utils_debugging <flag> <flag value>
+## Available flags
+### --file-descriptor / -fd < Value >
+##### ^^ This flag specifies a custom file-descriptor to use rather than the default one aka. 69
+### --log-filename / -lf < Filename >
+### ^^ This flag specifies a custom filename to use ; note thag it wont change the path of the file
 utils_debugging () {
 # Default values
 local log_status="true"
@@ -31,10 +37,12 @@ local log_fname="$(date +%d-%m-%y)_build.log"
 									local log_fname="${2}"
 								else
 									echo "${FUNCNAME[0]} > : Filename empty" 1>&2
+									return
 							fi
 						;;
 						--* | -*)
 						echo "Invalid option $i !"
+						return
 						;;
 					esac
 				done
