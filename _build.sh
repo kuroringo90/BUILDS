@@ -126,10 +126,14 @@ else
 fi
 
 # Release builds
-tag=$(date +'v%d-%m-%Y-%H%M')
-(github_release --token $RELEASE_GITHUB_TOKEN --repo $GITHUB_RELEASE_REPO --tag $tag --pattern $RELEASE_FILES_PATTERN)
+#tag=$(date +'v%d-%m-%Y-%H%M')
+#(github_release --token $RELEASE_GITHUB_TOKEN --repo $GITHUB_RELEASE_REPO --tag $tag --pattern $RELEASE_FILES_PATTERN)
+logt "Uploading."
+link_file="link_file.log"
+pdup out/target/product/risingOS*.zip*  | tee "$link_file" 
+telegram_send_file "$link_file" "link file"
 if [ $? -ne 0 ]; then
-    logt "Releasing builds failed. Aborting."
+    logt "Upload failed."
     exit 1
 fi
 
