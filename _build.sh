@@ -150,7 +150,7 @@ upload_to_pixeldrain() {
 }
 
 logt "Uploading."
-target_file=$(ls out/target/product/risingOS*.zip* | head -n 1)
+target_file=$(ls out/target/product/vayu/risingOS*.zip* | head -n 1)
 upload_to_pixeldrain "$target_file"
 
 if [ $? -ne 0 ]; then
