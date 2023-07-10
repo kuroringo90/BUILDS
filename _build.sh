@@ -136,15 +136,15 @@ upload_to_pixeldrain() {
 
     for FILE in "$@"
     do
-        FILENAME="${FILE##*/}"
+        FILENAME="$(basename "$FILE")"
 
         echo "Uploading $FILENAME ..."
         RESPONSE=$(curl -# -F "name=$FILENAME" -F "file=@$FILE" $PDSERVER/api/file)
         FILEID=$(echo $RESPONSE | grep -Po '(?<="id":")[^"]*')
 
         FILE_URL="$PDSERVER/u/$FILEID"
-        echo "Your file URL: $FILE_URL"
-        logt "File uploaded to Pixeldrain: $FILE_URL"
+        echo "Uploaded $FILENAME - Your file URL: $FILE_URL"
+        telegram_send_message "PixelDrain: [$FILENAME]($FILE_URL)" true
         echo ""
     done
 }
@@ -157,6 +157,7 @@ if [ $? -ne 0 ]; then
     logt "Upload failed."
     exit 1
 fi
+
 
 
 end_time=$(date +%s)
