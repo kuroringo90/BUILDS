@@ -50,7 +50,7 @@ RELEASE_OUT_DIR="out/target/product/$DEVICE"
 # PRE_SYNC_SOURCE_COMMAND=""
 
 # Required:
-SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)"
+SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --optimized-fetch --prune --force-sync -j$(nproc --all)"
 
 # Optional: If you have any post command to run after syncing source
 # POST_SYNC_SOURCE_COMMAND=""
