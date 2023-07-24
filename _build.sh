@@ -126,39 +126,12 @@ else
 fi
 
 # Release builds
-#tag=$(date +'v%d-%m-%Y-%H%M')
-#(github_release --token $RELEASE_GITHUB_TOKEN --repo $GITHUB_RELEASE_REPO --tag $tag --pattern $RELEASE_FILES_PATTERN)
-
-# Function to upload file to Pixeldrain
-upload_to_pixeldrain() {
-    MINPARAMS=1
-    PDSERVER="https://pixeldrain.com"
-
-    for FILE in "$@"
-    do
-        FILENAME="$(basename "$FILE")"
-
-        echo "Uploading $FILENAME ..."
-        RESPONSE=$(curl -# -F "name=$FILENAME" -F "file=@$FILE" $PDSERVER/api/file)
-        FILEID=$(echo $RESPONSE | grep -Po '(?<="id":")[^"]*')
-
-        FILE_URL="$PDSERVER/u/$FILEID"
-        echo "Uploaded $FILENAME - Your file URL: $FILE_URL"
-        telegram_send_message "PixelDrain: [$FILENAME]($FILE_URL)" true
-        echo ""
-    done
-}
-
-logt "Uploading."
-target_file=$(ls out/target/product/vayu/risingOS*.zip* | head -n 1)
-upload_to_pixeldrain "$target_file"
-
+tag=$(date +'v%d-%m-%Y-%H%M')
+(github_release --token $RELEASE_GITHUB_TOKEN --repo $GITHUB_RELEASE_REPO --tag $tag --pattern $RELEASE_FILES_PATTERN)
 if [ $? -ne 0 ]; then
     logt "Upload failed."
     exit 1
 fi
-
-
 
 end_time=$(date +%s)
 # convert seconds to hours, minutes, and seconds
