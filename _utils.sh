@@ -328,7 +328,7 @@ remove_ota_package() {
     return
   fi
   # Remove OTA package if exists with name *_$DEVICE-ota-*.$USER.zip
-  local ota_package=$(ls $RELEASE_OUT_DIR/*_$DEVICE-ota-*.$USER.zip)
+  local ota_package=$(ls $RELEASE_OUT_DIR/*_$DEVICE-ota-*.*.zip)
   if [ -n "$ota_package" ]; then
     base_filename=$(basename $ota_package)
     echo "Removing OTA package $base_filename"
