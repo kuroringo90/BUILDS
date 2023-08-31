@@ -24,7 +24,7 @@ fi
 start_time=$(date +%s)
 
 # Install dependencies
-resolve_dependencies | tee resolve_dependencies.log
+#resolve_dependencies | tee resolve_dependencies.log
 
 # Setup git
 git_setup $GIT_NAME $GIT_EMAIL
