@@ -23,6 +23,19 @@ fi
 
 start_time=$(date +%s)
 
+# Install dependencies
+resolve_dependencies | tee resolve_dependencies.log
+
+# Setup git
+git_setup $GIT_NAME $GIT_EMAIL
+
+# Setup source
+logt "Setting up source..."
+chmod +x vendor-setup-miku.sh
+./vendor-setup-miku.sh
+if [ $? -ne 0 ]; then
+    echo "Setup source failed"
+fi
 
 # Sync source
   if [[ "$SYNC_FLAG" == "true" ]]; then
