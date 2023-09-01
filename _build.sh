@@ -27,15 +27,15 @@ start_time=$(date +%s)
 #resolve_dependencies | tee resolve_dependencies.log
 
 # Setup git
-git_setup $GIT_NAME $GIT_EMAIL
+# git_setup $GIT_NAME $GIT_EMAIL
 
 # Setup source
-logt "Setting up source..."
-chmod +x vendor-setup-miku.sh
-./vendor-setup-miku.sh
-if [ $? -ne 0 ]; then
-    echo "Setup source failed"
-fi
+#logt "Setting up source..."
+#chmod +x vendor-setup-miku.sh
+#./vendor-setup-miku.sh
+#if [ $? -ne 0 ]; then
+#    echo "Setup source failed"
+#fi
 
 # Sync source
   if [[ "$SYNC_FLAG" == "true" ]]; then
@@ -60,7 +60,7 @@ logt "Clean Strategy..."
 # Check if CLEAN is set to "installclean"
 if [[ "$CLEAN" == "installclean" ]]; then
     telegram_send_message "Make Installclean"
-    source build/envsetup.sh && lunch miku_vayu-userdebug && make installclean
+    source build/envsetup.sh && lunch superior_vayu-userdebug && make installclean
     if [ $? -ne 0 ]; then
         telegram_send_message "Install Clean Failed. Aborting."
         exit 1
@@ -68,7 +68,7 @@ if [[ "$CLEAN" == "installclean" ]]; then
 # Check if CLEAN is set to "clobber"
 elif [[ "$CLEAN" == "clobber" ]]; then
     telegram_send_message "Clobber"
-    source build/envsetup.sh && lunch miku_vayu-userdebug && make clobber
+    source build/envsetup.sh && lunch superior_vayu-userdebug && make clobber
     if [ $? -ne 0 ]; then
         telegram_send_message "Clobber Failed. Aborting."
         exit 1

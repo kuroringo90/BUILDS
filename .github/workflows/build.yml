@@ -26,11 +26,6 @@ env:
   SYNC_FLAG: ${{ github.event.inputs.sync }}
   CLEAN: ${{ github.event.inputs.cleanstrategy }}
 
-# queue up builds to prevent failures on progress of other builds
-concurrency:
-  group: building_rom
-  cancel-in-progress: false
-
 jobs:
   build:
     timeout-minutes: 2400
@@ -41,7 +36,7 @@ jobs:
     steps:
       - name: Checkout
         run: |
-          cd ~/miku/
+          cd ~/sex/
           rm -rf __rom-build_scripts__
           git_branch=$(echo ${{ github.ref }} | sed 's/refs\/heads\///')
           echo "Branch: $git_branch"
@@ -49,7 +44,7 @@ jobs:
 
       - name: Build
         run: |
-          cd ~/miku/
+          cd ~/sex/
           source __rom-build_scripts__/._env
           required_files=( _utils.sh _build.sh ._env vendor-setup-miku.sh $REPOS_JSON )
           rm -rf "${required_files[@]}"
