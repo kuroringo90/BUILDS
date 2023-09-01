@@ -1,6 +1,6 @@
 # Required: Device codename
 DEVICE="vayu"
-ROM_NAME="MikuOS"
+ROM_NAME="SuperiorExtended"
 
 # Required: git username
 GIT_NAME="kuroringo90"
