@@ -26,10 +26,6 @@ env:
   SYNC_FLAG: ${{ github.event.inputs.sync }}
   CLEAN: ${{ github.event.inputs.cleanstrategy }}
 
-# queue up builds to prevent failures on progress of other builds
-concurrency:
-  group: building_rom
-  cancel-in-progress: false
 
 jobs:
   build:
