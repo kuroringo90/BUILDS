@@ -46,7 +46,7 @@ jobs:
         run: |
           cd ~/sex/
           source __rom-build_scripts__/._env
-          required_files=( _utils.sh _build.sh ._env vendor-setup-miku.sh $REPOS_JSON )
+          required_files=( _utils.sh _build.sh ._env $REPOS_JSON )
           rm -rf "${required_files[@]}"
           for file in "${required_files[@]}"; do
             if [ ! -f "__rom-build_scripts__/$file" ]; then
