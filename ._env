@@ -68,7 +68,7 @@ BUILD_GAPPS_COMMAND="source build/envsetup.sh && lunch blackiron_vayu-userdebug 
 # POST_BUILD_COMMAND=""
 
 # Optional: If you do not want logs
-LOG_OUTPUT=false
+LOG_OUTPUT=true
 
 # Optional: if you want updates in telegram, better set it as a secret in your GitHub repo settings
 # TG_TOKEN="" # Your bot token
