@@ -59,7 +59,7 @@ SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --no-tags --optimized-fetch 
 # PRE_BUILD_COMMAND=""
 
 # Vanilla build command 
-BUILD_VANILLA_COMMAND="source build/envsetup.sh && export WITH_GAPPS=false && lunch banana_vayu-userdebug && m banana"
+#BUILD_VANILLA_COMMAND="source build/envsetup.sh && export WITH_GAPPS=false && lunch banana_vayu-userdebug && m banana"
 
 # Optional: If you want to build GAPPS, set this 
 BUILD_GAPPS_COMMAND="source build/envsetup.sh && export WITH_GAPPS=true && lunch banana_vayu-userdebug && m banana"
