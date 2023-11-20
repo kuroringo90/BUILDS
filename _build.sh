@@ -125,12 +125,42 @@ else
     echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla build."
 fi
 
-# Release builds
-tag=$(date +'v%d-%m-%Y-%H%M')
-(github_release --token $RELEASE_GITHUB_TOKEN --repo $GITHUB_RELEASE_REPO --tag $tag --pattern $RELEASE_FILES_PATTERN)
+# Configure rclone remote
+RCLONE_REMOTE=ste
+
+# Function to upload file with rclone 
+upload_with_rclone(){
+  
+  for FILE in "$@"
+  do
+
+    FILENAME=$(basename "$FILE")
+
+    echo "Uploading $FILENAME..."
+
+    rclone copy $FILE $RCLONE_REMOTE:/uploads
+
+    LINK=$(rclone link $RCLONE_REMOTE:/uploads/$FILENAME)
+
+    echo "Uploaded $FILENAME - URL: $LINK"
+
+    telegram_send_message "Onedrive: \[$FILENAME\]($LINK)"
+
+    echo ""
+
+  done
+  
+}
+
+logt "Uploading."
+
+target_file=$(ls out/target/product/vayu/risingOS*.zip* | head -n 1)
+
+upload_with_rclone "$target_file" 
+
 if [ $? -ne 0 ]; then
-    logt "Upload failed."
-    exit 1
+  logt "Upload failed."
+  exit 1
 fi
 
 end_time=$(date +%s)
