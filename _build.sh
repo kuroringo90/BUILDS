@@ -144,7 +144,7 @@ upload_with_rclone(){
 
     echo "Uploaded $FILENAME - URL: $LINK"
 
-    telegram_send_message "Onedrive: \[$FILENAME\]($LINK)"
+    telegram_send_message "Onedrive: \[$FILENAME\]($LINK)" true
 
     echo ""
 
