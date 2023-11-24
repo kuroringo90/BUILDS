@@ -12,7 +12,7 @@ for var in "${req_vars[@]}"; do
     fi
 done
 
-telegram_send_message "⏳"
+#telegram_send_message "⏳"
 telegram_send_message "*Build Initiated*: [$ROM_NAME for $DEVICE]($GITHUB_RUN_URL)" true
 
 # Check either BUILD_VANILLA_COMMAND or BUILD_GAPPS_COMMAND is set
