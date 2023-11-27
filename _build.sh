@@ -135,7 +135,8 @@ upload_with_rclone(){
   do
 
     FILENAME=$(basename "$FILE")
-
+    SUMFILE=$FILE.sha256sum
+    
     echo "Uploading $FILENAME..."
 
     rclone copy $FILE $RCLONE_REMOTE:/uploads
@@ -145,7 +146,11 @@ upload_with_rclone(){
     echo "Uploaded $FILENAME - URL: $LINK"
 
     telegram_send_message "Onedrive: [$FILENAME]($LINK)" true
-
+    
+    checksum=$(cat $SUMFILE | awk '{print $1}')
+    echo "sha256sum $checksum"
+    telegram_send_message "sha256sum:\n`$checksum`" false
+   
     echo ""
 
   done
