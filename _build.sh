@@ -149,7 +149,7 @@ upload_with_rclone(){
     
     checksum=$(cat $SUMFILE | awk '{print $1}')
     echo "sha256sum $checksum"
-    telegram_send_message "sha256sum:\n`$checksum`" false
+    telegram_send_message "$checksum" false
    
     echo ""
 
