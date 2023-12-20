@@ -156,19 +156,28 @@ upload_with_rclone(){
   done
   
 }
-
 logt "Uploading."
 
-target_file=$(ls out/target/product/vayu/risingOS*.zip* | head -n 1)
+gapps_file=$(ls out/target/product/vayu/risingOS-*-GAPPS-*.zip | head -n 1)
 
-upload_with_rclone "$target_file" 
-
+upload_with_rclone "$gapps_file" 
 if [ $? -ne 0 ]; then
-  logt "Upload failed."
-  exit 1
+  logt "Gapps upload failed."
+  exit 1  
+  
+vanilla_file=$(ls out/target/product/vayu/risingOS-*-VANILLA-*.zip 2> /dev/null)
+
+if [ -n "$vanilla_file" ]; then
+  upload_with_rclone "$vanilla_file"
+  if [ $? -ne 0 ]; then
+    logt "Vanilla upload failed."
+    exit 1
+  fi  
+else
+  logt "No vanilla ZIP to upload."  
 fi
 
-end_time=$(date +%s)
+fi$(date +%s)
 # convert seconds to hours, minutes, and seconds
 time_taken=$(compute_build_time "$start_time" "$end_time")
 telegram_send_message "Total time taken *$time_taken*"
