@@ -164,7 +164,8 @@ upload_with_rclone "$gapps_file"
 if [ $? -ne 0 ]; then
   logt "Gapps upload failed."
   exit 1  
-  
+fi
+
 vanilla_file=$(ls out/target/product/vayu/risingOS-*-VANILLA-*.zip 2> /dev/null)
 
 if [ -n "$vanilla_file" ]; then
