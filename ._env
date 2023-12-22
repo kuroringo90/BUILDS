@@ -65,7 +65,7 @@ SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --optimized-fetch --prune --
 BUILD_INSTALL_CLEAN="export WITH_GMS=true && source build/envsetup.sh && riseup vayu userdebug && make installclean"
 
 # Vanilla build command 
-BUILD_VANILLA_COMMAND="export SKIP_ABI_CHECKS=true && export WITH_GMS=false && source build/envsetup.sh && riseup vayu userdebug && ascend"
+#BUILD_VANILLA_COMMAND="export SKIP_ABI_CHECKS=true && export WITH_GMS=false && source build/envsetup.sh && riseup vayu userdebug && ascend"
 
 # Optional: If you want to build GAPPS, set this 
 BUILD_GAPPS_COMMAND="export SKIP_ABI_CHECKS=true && export WITH_GMS=true && source build/envsetup.sh && riseup vayu userdebug && ascend"
