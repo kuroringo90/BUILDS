@@ -41,17 +41,17 @@ fi
 
 # Make install clean to clean old zips
 logt "Cleaning Up..."
-    if [ -e "out/target/product/$DEVICE/$ZIP_NAME"* ]; then
-        eval "$BUILD_INSTALL_CLEAN"
-        if [ $? -ne 0 ]; then
-            echo "Install clean failed. Aborting."
-            telegram_send_message "Install clean failed. Aborting."
-            exit 1
-        fi
-    else
-        echo "No zip found. Skipping install clean."
-        telegram_send_message "No zip found. Skipping install clean."
+if ls "out/target/product/$DEVICE/$ZIP_NAME"* 1> /dev/null 2>&1; then
+    eval "$BUILD_INSTALL_CLEAN"
+    if [ $? -ne 0 ]; then
+        echo "Install clean failed. Aborting."
+        telegram_send_message "Install clean failed. Aborting."
+        exit 1
     fi
+else
+    echo "No zip found. Skipping install clean."
+    telegram_send_message "No zip found. Skipping install clean."
+fi
  
     # Build GApps
     # if BUILD_GAPPS_COMMAND is set, otherwise skip
