@@ -59,6 +59,35 @@ logt() {
   echo "$message"
 }
 
+# Function to upload file with rclone 
+upload_with_rclone(){
+  
+  for FILE in "$@"
+  do
+
+    FILENAME=$(basename "$FILE")
+    SUMFILE=$FILE.sha256sum
+    
+    echo "Uploading $FILENAME..."
+
+    rclone copy $FILE $RCLONE_REMOTE:/uploads
+
+    LINK=$(rclone link $RCLONE_REMOTE:/uploads/$FILENAME)
+
+    echo "Uploaded $FILENAME - URL: $LINK"
+
+    telegram_send_message "Onedrive: [$FILENAME]($LINK)" true
+    
+    checksum=$(cat $SUMFILE | awk '{print $1}')
+    echo "sha256sum $checksum"
+    telegram_send_message "$checksum" false
+   
+    echo ""
+
+  done
+  
+}
+
 resolve_dependencies() {
   # Remove repo if it exists as it is outdated
   sudo apt-get remove -y repo || apt-get remove -y repo
@@ -339,4 +368,4 @@ remove_ota_package() {
 }
 
 # Export functions
-export -f resolve_dependencies git_setup git_clone git_clone_json clean_build github_release telegram_send_message telegram_send_file update_tg logt
+export -f resolve_dependencies git_setup git_clone git_clone_json clean_build github_release telegram_send_message telegram_send_file update_tg logt upload_with_rclone

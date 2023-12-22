@@ -6,7 +6,7 @@ on:
       cleanstrategy:
         description: 'Select Clean strategy'
         required: true
-        default: 'installclean'
+        default: 'nope'
         type: choice
         options:
           - nope

@@ -4,7 +4,7 @@ source _utils.sh
 source ._env # remove this line if you want environment variables to be set in the shell or use a different method to set them
 
 # Check if required variables are set
-req_vars=("DEVICE" "ROM_NAME" "ZIP_NAME" "GIT_NAME" "GIT_EMAIL" "REPOS_JSON" "BUILD_INSTALL_CLEAN" "SYNC_SOURCE_COMMAND" "RELEASE_GITHUB_TOKEN" "GITHUB_RELEASE_REPO" "RELEASE_OUT_DIR" "RELEASE_FILES_PATTERN")
+req_vars=("DEVICE" "ROM_NAME" "ZIP_NAME" "GIT_NAME" "RCLONE_REMOTE" "GIT_EMAIL" "REPOS_JSON" "BUILD_INSTALL_CLEAN" "SYNC_SOURCE_COMMAND" "RELEASE_GITHUB_TOKEN" "GITHUB_RELEASE_REPO" "RELEASE_OUT_DIR" "RELEASE_FILES_PATTERN")
 for var in "${req_vars[@]}"; do
     if [ -z "${!var}" ]; then
         echo "Required variable $var is not set. Please set it in ._env"
@@ -53,10 +53,6 @@ logt "Cleaning Up..."
         telegram_send_message "No zip found. Skipping install clean."
     fi
  
-    # Add break point to exit
-    echo "Break point reached. Exiting script."
-    exit 0
-
 # Build GApps
 # if BUILD_GAPPS_COMMAND is set, otherwise skip
 if [ -n "$BUILD_GAPPS_COMMAND" ]; then
@@ -121,37 +117,6 @@ else
     echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla build."
 fi
 
-# Configure rclone remote
-RCLONE_REMOTE=ste
-
-# Function to upload file with rclone 
-upload_with_rclone(){
-  
-  for FILE in "$@"
-  do
-
-    FILENAME=$(basename "$FILE")
-    SUMFILE=$FILE.sha256sum
-    
-    echo "Uploading $FILENAME..."
-
-    rclone copy $FILE $RCLONE_REMOTE:/uploads
-
-    LINK=$(rclone link $RCLONE_REMOTE:/uploads/$FILENAME)
-
-    echo "Uploaded $FILENAME - URL: $LINK"
-
-    telegram_send_message "Onedrive: [$FILENAME]($LINK)" true
-    
-    checksum=$(cat $SUMFILE | awk '{print $1}')
-    echo "sha256sum $checksum"
-    telegram_send_message "$checksum" false
-   
-    echo ""
-
-  done
-  
-}
 
 logt "Uploading."
 
