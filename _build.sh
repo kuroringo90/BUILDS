@@ -53,69 +53,55 @@ logt "Cleaning Up..."
         telegram_send_message "No zip found. Skipping install clean."
     fi
  
-# Build GApps
-# if BUILD_GAPPS_COMMAND is set, otherwise skip
-if [ -n "$BUILD_GAPPS_COMMAND" ]; then
-    start_time_gapps=$(date +%s)
-    gapps_log_file="gapps_build.log"
-    logt "Building GApps..."
-    # if LOG_OUTPUT is set to false, then don't log output
- if [ "$LOG_OUTPUT" == "false" ]; then
-    eval "$BUILD_GAPPS_COMMAND"
-    build_status=$?
-      else
-    eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"
-    build_status=${PIPESTATUS[0]}
-fi
-
-if [ $build_status -ne 0 ]; then
-    logt "GApps build failed. Aborting."
-    telegram_send_file "$gapps_log_file" "GApps build log"
-    exit 1
-fi
-    end_time_gapps=$(date +%s)
-    gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
-    logt "GApps build completed in $gapps_time_taken"
-    remove_ota_package # remove OTA package if present
-    if [ $? -ne 0 ]; then
-        logt "Failed to remove OTA package. Aborting."
-        exit 1
+    # Build GApps
+    # if BUILD_GAPPS_COMMAND is set, otherwise skip
+    if [ -n "$BUILD_GAPPS_COMMAND" ]; then
+        start_time_gapps=$(date +%s)
+        logt "Building GApps..."
+        eval "$BUILD_GAPPS_COMMAND"
+        build_status=$?
+        
+        if [ $build_status -ne 0 ]; then
+            logt "GApps build failed. Aborting."
+            telegram_send_file "out/error.log" "GApps build log"
+            exit 1
+        fi
+        end_time_gapps=$(date +%s)
+        gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
+        logt "GApps build completed in $gapps_time_taken"
+        remove_ota_package # remove OTA package if present
+        if [ $? -ne 0 ]; then
+            logt "Failed to remove OTA package. Aborting."
+            exit 1
+        fi
+    else
+        echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
     fi
-else
-    echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
-fi
-
-# Build Vanilla
-# if BUILD_VANILLA_COMMAND is set, otherwise skip
-if [ -n "$BUILD_VANILLA_COMMAND" ]; then
-    start_time_vanilla=$(date +%s)
-    vanilla_log_file="vanilla_build.log"
-    logt "Building vanilla..."
-    # if LOG_OUTPUT is set to false, then don't log output
-if [ "$LOG_OUTPUT" == "false" ]; then
-    eval "$BUILD_VANILLA_COMMAND"
-    build_status=$?
-else
-    eval "$BUILD_VANILLA_COMMAND" | tee "$vanilla_log_file"
-    build_status=${PIPESTATUS[0]}
-fi
-
-if [ $build_status -ne 0 ]; then
-    logt "Vanilla build failed. Aborting."
-    telegram_send_file "$vanilla_log_file" "Vanilla build log"
-    exit 1
-fi
-    end_time_vanilla=$(date +%s)
-    vanilla_time_taken=$(compute_build_time "$start_time_vanilla" "$end_time_vanilla")
-    logt "Vanilla build completed in $vanilla_time_taken"
-    remove_ota_package # remove OTA package if present
-    if [ $? -ne 0 ]; then
-        logt "Failed to remove OTA package. Aborting."
-        exit 1
+    
+    # Build Vanilla
+    # if BUILD_VANILLA_COMMAND is set, otherwise skip
+    if [ -n "$BUILD_VANILLA_COMMAND" ]; then
+        start_time_vanilla=$(date +%s)
+        logt "Building vanilla..."
+        eval "$BUILD_VANILLA_COMMAND"
+        build_status=$?
+        
+        if [ $build_status -ne 0 ]; then
+            logt "Vanilla build failed. Aborting."
+            telegram_send_file "out/error.log" "Vanilla build log"
+            exit 1
+        fi
+        end_time_vanilla=$(date +%s)
+        vanilla_time_taken=$(compute_build_time "$start_time_vanilla" "$end_time_vanilla")
+        logt "Vanilla build completed in $vanilla_time_taken"
+        remove_ota_package # remove OTA package if present
+        if [ $? -ne 0 ]; then
+            logt "Failed to remove OTA package. Aborting."
+            exit 1
+        fi
+    else
+        echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla build."
     fi
-else
-    echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla build."
-fi
 
 
 logt "Uploading."
@@ -128,17 +114,21 @@ if [ $? -ne 0 ]; then
   exit 1  
 fi
 
-vanilla_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*-VANILLA-*.zip 2> /dev/null)
-
-if [ -n "$vanilla_file" ]; then
-  upload_with_rclone "$vanilla_file"
-  if [ $? -ne 0 ]; then
-    logt "Vanilla upload failed."
-    exit 1
-  fi  
-else
-  logt "No vanilla ZIP to upload."  
-fi
+    if [ -n "$BUILD_VANILLA_COMMAND" ]; then
+        vanilla_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*-VANILLA-*.zip 2> /dev/null)
+        
+        if [ -n "$vanilla_file" ]; then
+            upload_with_rclone "$vanilla_file"
+            if [ $? -ne 0 ]; then
+                logt "Vanilla upload failed."
+                exit 1
+            fi  
+        else
+            logt "No vanilla ZIP to upload."  
+        fi
+    else
+        echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla upload."
+    fi
 
 end_time=$(date +%s)
 # convert seconds to hours, minutes, and seconds
