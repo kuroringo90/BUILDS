@@ -4,7 +4,7 @@ source _utils.sh
 source ._env # remove this line if you want environment variables to be set in the shell or use a different method to set them
 
 # Check if required variables are set
-req_vars=("DEVICE" "ROM_NAME" "GIT_NAME" "GIT_EMAIL" "REPOS_JSON"  "SYNC_SOURCE_COMMAND" "RELEASE_GITHUB_TOKEN" "GITHUB_RELEASE_REPO" "RELEASE_OUT_DIR" "RELEASE_FILES_PATTERN")
+req_vars=("DEVICE" "ROM_NAME" "ZIP_NAME" "GIT_NAME" "GIT_EMAIL" "REPOS_JSON" "BUILD_INSTALL_CLEAN" "SYNC_SOURCE_COMMAND" "RELEASE_GITHUB_TOKEN" "GITHUB_RELEASE_REPO" "RELEASE_OUT_DIR" "RELEASE_FILES_PATTERN")
 for var in "${req_vars[@]}"; do
     if [ -z "${!var}" ]; then
         echo "Required variable $var is not set. Please set it in ._env"
@@ -39,28 +39,23 @@ if [[ "$SYNC_FLAG" == "true" ]]; then
     logt "Sync completed in $sync_time_taken"
 fi
 
-# Clean strategy
-logt "Clean Strategy..."
-# Check if CLEAN is set to "installclean"
-if [[ "$CLEAN" == "installclean" ]]; then
-    telegram_send_message "Make Installclean"
-    source build/envsetup.sh && lunch lineage_vayu-userdebug && make installclean
-    if [ $? -ne 0 ]; then
-        telegram_send_message "Install Clean Failed. Aborting."
-        exit 1
+# Make install clean to clean old zips
+logt "Cleaning Up..."
+    if [ -e "out/target/product/$DEVICE/$ZIP_NAME"* ]; then
+        eval "$BUILD_INSTALL_CLEAN"
+        if [ $? -ne 0 ]; then
+            echo "Install clean failed. Aborting."
+            telegram_send_message "Install clean failed. Aborting."
+            exit 1
+        fi
+    else
+        echo "No zip found. Skipping install clean."
+        telegram_send_message "No zip found. Skipping install clean."
     fi
-# Check if CLEAN is set to "clobber"
-elif [[ "$CLEAN" == "clobber" ]]; then
-    telegram_send_message "Clobber"
-    source build/envsetup.sh && lunch lineage_vayu-userdebug && make clobber
-    if [ $? -ne 0 ]; then
-        telegram_send_message "Clobber Failed. Aborting."
-        exit 1
-    fi
-# Check if CLEAN is set to "nope"
-elif [[ "$CLEAN" == "nope" ]]; then
-    telegram_send_message "DIRTY BUILD"
-fi
+ 
+    # Add break point to exit
+    echo "Break point reached. Exiting script."
+    exit 0
 
 # Build GApps
 # if BUILD_GAPPS_COMMAND is set, otherwise skip
@@ -98,6 +93,7 @@ fi
 # if BUILD_VANILLA_COMMAND is set, otherwise skip
 if [ -n "$BUILD_VANILLA_COMMAND" ]; then
     start_time_vanilla=$(date +%s)
+    vanilla_log_file="vanilla_build.log"
     logt "Building vanilla..."
     # if LOG_OUTPUT is set to false, then don't log output
 if [ "$LOG_OUTPUT" == "false" ]; then
@@ -156,9 +152,10 @@ upload_with_rclone(){
   done
   
 }
+
 logt "Uploading."
 
-gapps_file=$(ls out/target/product/vayu/risingOS-*-GAPPS-*.zip | head -n 1)
+gapps_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*-GAPPS-*.zip | head -n 1)
 
 upload_with_rclone "$gapps_file" 
 if [ $? -ne 0 ]; then
@@ -166,7 +163,7 @@ if [ $? -ne 0 ]; then
   exit 1  
 fi
 
-vanilla_file=$(ls out/target/product/vayu/risingOS-*-VANILLA-*.zip 2> /dev/null)
+vanilla_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*-VANILLA-*.zip 2> /dev/null)
 
 if [ -n "$vanilla_file" ]; then
   upload_with_rclone "$vanilla_file"
@@ -178,7 +175,7 @@ else
   logt "No vanilla ZIP to upload."  
 fi
 
-fi$(date +%s)
+end_time=$(date +%s)
 # convert seconds to hours, minutes, and seconds
 time_taken=$(compute_build_time "$start_time" "$end_time")
 telegram_send_message "Total time taken *$time_taken*"

@@ -50,13 +50,16 @@ RELEASE_OUT_DIR="out/target/product/$DEVICE"
 # PRE_SYNC_SOURCE_COMMAND=""
 
 # Required:
-SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --optimized-fetch --prune --force-sync -j$(nproc --all)"
+SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --optimized-fetch --prune --force-sync --force-remove-dirty -j$(nproc --all)"
 
 # Optional: If you have any post command to run after syncing source
 # POST_SYNC_SOURCE_COMMAND=""
 
 # Optional: If you have any pre command to run before building
 # PRE_BUILD_COMMAND=""
+
+# Install clean command
+BUILD_INSTALL_CLEAN="export WITH_GMS=true && source build/envsetup.sh && riseup vayu userdebug && make installclean"
 
 # Vanilla build command 
 BUILD_VANILLA_COMMAND="export SKIP_ABI_CHECKS=true && export WITH_GMS=false && source build/envsetup.sh && riseup vayu userdebug && ascend"
@@ -66,6 +69,8 @@ BUILD_GAPPS_COMMAND="export SKIP_ABI_CHECKS=true && export WITH_GMS=true && sour
 
 # Optional: If you have any post command to run after building
 # POST_BUILD_COMMAND=""
+
+ZIP_NAME="risingOS"
 
 # Optional: If you do not want logs
 LOG_OUTPUT=true
