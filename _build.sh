@@ -59,10 +59,7 @@ fi
         start_time_gapps=$(date +%s)
         gapps_log_file="gapps_build.log"
         logt "Building GApps..."
-        eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"
-        build_status=$?
-        
-        if [ $build_status -ne 0 ]; then
+        if ! eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"; then
             logt "GApps build failed. Aborting."
             telegram_send_file "out/error.log" "GApps build log"
             exit 1
@@ -70,29 +67,20 @@ fi
         end_time_gapps=$(date +%s)
         gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
         logt "GApps build completed in $gapps_time_taken"
-        remove_ota_package # remove OTA package if present
-        if [ $? -ne 0 ]; then
+        if ! remove_ota_package; then # remove OTA package if present
             logt "Failed to remove OTA package. Aborting."
             exit 1
         fi
     else
         echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
     fi
-    
-    # If GApps build failed, exit completely
-    if [ $build_status -ne 0 ]; then
-        exit 1
-    fi
-    
     # Build Vanilla
     # if BUILD_VANILLA_COMMAND is set, otherwise skip
     if [ -n "$BUILD_VANILLA_COMMAND" ]; then
         start_time_vanilla=$(date +%s)
+        vanilla_log_file="vanilla_build.log"
         logt "Building vanilla..."
-        eval "$BUILD_VANILLA_COMMAND"
-        build_status=$?
-        
-        if [ $build_status -ne 0 ]; then
+        if ! eval "$BUILD_VANILLA_COMMAND" | tee "$vanilla_log_file"; then
             logt "Vanilla build failed. Aborting."
             telegram_send_file "out/error.log" "Vanilla build log"
             exit 1
@@ -100,8 +88,7 @@ fi
         end_time_vanilla=$(date +%s)
         vanilla_time_taken=$(compute_build_time "$start_time_vanilla" "$end_time_vanilla")
         logt "Vanilla build completed in $vanilla_time_taken"
-        remove_ota_package # remove OTA package if present
-        if [ $? -ne 0 ]; then
+        if ! remove_ota_package; then # remove OTA package if present
             logt "Failed to remove OTA package. Aborting."
             exit 1
         fi
