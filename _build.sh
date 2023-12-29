@@ -57,8 +57,9 @@ fi
     # if BUILD_GAPPS_COMMAND is set, otherwise skip
     if [ -n "$BUILD_GAPPS_COMMAND" ]; then
         start_time_gapps=$(date +%s)
+        gapps_log_file="gapps_build.log"
         logt "Building GApps..."
-        eval "$BUILD_GAPPS_COMMAND"
+        eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"
         build_status=$?
         
         if [ $build_status -ne 0 ]; then
