@@ -53,27 +53,39 @@ else
     telegram_send_message "No zip found. Skipping install clean."
 fi
  
-    # Build GApps
-    # if BUILD_GAPPS_COMMAND is set, otherwise skip
-    if [ -n "$BUILD_GAPPS_COMMAND" ]; then
-        start_time_gapps=$(date +%s)
-        gapps_log_file="gapps_build.log"
-        logt "Building GApps..."
-        if ! eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"; then
-            logt "GApps build failed. Aborting."
-            telegram_send_file "out/error.log" "GApps build log"
-            exit 1
-        fi
-        end_time_gapps=$(date +%s)
-        gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
-        logt "GApps build completed in $gapps_time_taken"
-        if ! remove_ota_package; then # remove OTA package if present
-            logt "Failed to remove OTA package. Aborting."
-            exit 1
-        fi
-    else
-        echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
+# Build GApps
+# if BUILD_GAPPS_COMMAND is set, otherwise skip
+if [ -n "$BUILD_GAPPS_COMMAND" ]; then
+    # Check if the command is valid
+    if ! command -v "$BUILD_GAPPS_COMMAND" >/dev/null 2>&1; then
+        echo "Invalid command: $BUILD_GAPPS_COMMAND. Aborting."
+        exit 1
     fi
+
+    start_time_gapps=$(date +%s)
+    gapps_log_file="gapps_build.log"
+    logt "Building GApps..."
+
+    # Run the command and log the output
+    if ! eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"; then
+        logt "GApps build failed.Aborting."
+        telegram_send_file "out/error.log" "GApps build log"
+        exit 1
+    fi
+
+    end_time_gapps=$(date +%s)
+    gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
+    logt "GApps build completed in $gapps_time_taken"
+
+    # Remove the OTA package
+    if ! remove_ota_package; then
+        logt "Failed to remove OTA package. Aborting."
+        exit 1
+    fi
+else
+    echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
+fi
+
     # Build Vanilla
     # if BUILD_VANILLA_COMMAND is set, otherwise skip
     if [ -n "$BUILD_VANILLA_COMMAND" ]; then
