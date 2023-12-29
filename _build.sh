@@ -56,12 +56,6 @@ fi
 # Build GApps
 # if BUILD_GAPPS_COMMAND is set, otherwise skip
 if [ -n "$BUILD_GAPPS_COMMAND" ]; then
-    # Check if the command is valid
-    if ! command -v "$BUILD_GAPPS_COMMAND" >/dev/null 2>&1; then
-        echo "Invalid command: $BUILD_GAPPS_COMMAND. Aborting."
-        exit 1
-    fi
-
     start_time_gapps=$(date +%s)
     gapps_log_file="gapps_build.log"
     logt "Building GApps..."
