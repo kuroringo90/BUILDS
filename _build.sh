@@ -82,7 +82,8 @@ fi
     # If GApps build failed, exit completely
     if [ $build_status -ne 0 ]; then
         exit 1
-    fi```
+    fi
+    
     # Build Vanilla
     # if BUILD_VANILLA_COMMAND is set, otherwise skip
     if [ -n "$BUILD_VANILLA_COMMAND" ]; then
