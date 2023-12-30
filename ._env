@@ -65,7 +65,7 @@ SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --optimized-fetch --prune --
 BUILD_INSTALL_CLEAN="source build/envsetup.sh && export BUILD_WITH_GAPPS=false && lunch superior_vayu-userdebug && make installclean"
 
 # Vanilla build command 
-BUILD_VANILLA_COMMAND="source build/envsetup.sh && export BUILD_WITH_GAPPS=false && lunch superior_vayu-userdebug && mka bacon -j$(nproc --all)"
+#BUILD_VANILLA_COMMAND="source build/envsetup.sh && export BUILD_WITH_GAPPS=false && lunch superior_vayu-userdebug && mka bacon -j$(nproc --all)"
 
 # Optional: If you want to build GAPPS, set this 
 BUILD_GAPPS_COMMAND="source build/envsetup.sh && export BUILD_WITH_GAPPS=true && lunch superior_vayu-userdebug && mka bacon -j$(nproc --all)"
