@@ -115,7 +115,7 @@ if [ $? -ne 0 ]; then
 fi
 
     if [ -n "$BUILD_VANILLA_COMMAND" ]; then
-        vanilla_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*-VANILLA-*.zip 2> /dev/null)
+        vanilla_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*-Vanilla-*.zip 2> /dev/null)
         
         if [ -n "$vanilla_file" ]; then
             upload_with_rclone "$vanilla_file"
