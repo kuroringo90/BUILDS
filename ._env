@@ -73,7 +73,7 @@ BUILD_GAPPS_COMMAND="source build/envsetup.sh && export BUILD_WITH_GAPPS=true &&
 # Optional: If you have any post command to run after building
 # POST_BUILD_COMMAND=""
 
-ZIP_NAME="Superior"
+ZIP_NAME="SuperiorOS"
 
 # Optional: If you do not want logs
 LOG_OUTPUT=true
