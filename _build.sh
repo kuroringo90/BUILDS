@@ -53,55 +53,45 @@ else
     telegram_send_message "No zip found. Skipping install clean."
 fi
  
-# Build GApps
-# if BUILD_GAPPS_COMMAND is set, otherwise skip
-if [ -n "$BUILD_GAPPS_COMMAND" ]; then
-    start_time_gapps=$(date +%s)
-    gapps_log_file="gapps_build.log"
-    logt "Building GApps..."
-
-    # Run the command and log the output
-    if ! eval "$BUILD_GAPPS_COMMAND" | tee "$gapps_log_file"; then
-        logt "GApps build failed.Aborting."
-        telegram_send_file "out/error.log" "GApps build log"
-        exit 1
-    fi
-
-    end_time_gapps=$(date +%s)
-    gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
-    logt "GApps build completed in $gapps_time_taken"
-
-    # Remove the OTA package
-    if ! remove_ota_package; then
-        logt "Failed to remove OTA package. Aborting."
+# Make install clean to clean old zips
+logt "Cleaning Up..."
+if ls "out/target/product/$DEVICE/$ZIP_NAME"* 1> /dev/null 2>&1; then
+    eval "$BUILD_INSTALL_CLEAN"
+    if [ $? -ne 0 ]; then
+        echo "Install clean failed. Aborting."
+        telegram_send_message "Install clean failed. Aborting."
         exit 1
     fi
 else
-    echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
+    echo "No zip found. Skipping install clean."
+    telegram_send_message "No zip found. Skipping install clean."
 fi
-
-    # Build Vanilla
-    # if BUILD_VANILLA_COMMAND is set, otherwise skip
-    if [ -n "$BUILD_VANILLA_COMMAND" ]; then
-        start_time_vanilla=$(date +%s)
-        vanilla_log_file="vanilla_build.log"
-        logt "Building vanilla..."
-        if ! eval "$BUILD_VANILLA_COMMAND" | tee "$vanilla_log_file"; then
-            logt "Vanilla build failed. Aborting."
-            telegram_send_file "out/error.log" "Vanilla build log"
+ 
+    # Build GApps
+    # if BUILD_GAPPS_COMMAND is set, otherwise skip
+    if [ -n "$BUILD_GAPPS_COMMAND" ]; then
+        start_time_gapps=$(date +%s)
+        logt "Building GApps..."
+        eval "$BUILD_GAPPS_COMMAND"
+        build_status=$?
+        
+        if [ $build_status -ne 0 ]; then
+            logt "GApps build failed. Aborting."
+            telegram_send_file "out/error.log" "GApps build log"
             exit 1
         fi
-        end_time_vanilla=$(date +%s)
-        vanilla_time_taken=$(compute_build_time "$start_time_vanilla" "$end_time_vanilla")
-        logt "Vanilla build completed in $vanilla_time_taken"
-        if ! remove_ota_package; then # remove OTA package if present
+        end_time_gapps=$(date +%s)
+        gapps_time_taken=$(compute_build_time "$start_time_gapps" "$end_time_gapps")
+        logt "GApps build completed in $gapps_time_taken"
+        remove_ota_package # remove OTA package if present
+        if [ $? -ne 0 ]; then
             logt "Failed to remove OTA package. Aborting."
             exit 1
         fi
     else
-        echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla build."
+        echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
     fi
-
+    
 
 logt "Uploading."
 
