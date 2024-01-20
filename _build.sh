@@ -82,9 +82,6 @@ fi
     # if BUILD_VANILLA_COMMAND is set, otherwise skip
     if [ -n "$BUILD_VANILLA_COMMAND" ]; then
         start_time_vanilla=$(date +%s)
-        
-        logt "Cleaning Up before vanilla..."
-        eval "$BUILD_INSTALL_CLEAN"
 
         logt "Building vanilla..."
         eval "$BUILD_VANILLA_COMMAND"
