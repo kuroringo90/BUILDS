@@ -1,6 +1,6 @@
 # Required: Device codename
 DEVICE="vayu"
-ROM_NAME="SuperiorExtended"
+ROM_NAME="BananaDroid"
 
 # Required: git username
 GIT_NAME="kuroringo90"
@@ -62,18 +62,18 @@ SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --optimized-fetch --prune --
 # PRE_BUILD_COMMAND=""
 
 # Install clean command
-BUILD_INSTALL_CLEAN="source build/envsetup.sh && export BUILD_WITH_GAPPS=false && lunch superior_vayu-userdebug && make installclean"
+BUILD_INSTALL_CLEAN="source build/envsetup.sh && export WITH_GAPPS=false && lunch banana_vayu-userdebug && make installclean"
 
 # Vanilla build command 
-BUILD_VANILLA_COMMAND="source build/envsetup.sh && export BUILD_WITH_GAPPS=false && lunch superior_vayu-userdebug && mka bacon -j$(nproc --all)"
+BUILD_VANILLA_COMMAND="source build/envsetup.sh && export WITH_GAPPS=false && lunch banana_vayu-userdebug && m banana"
 
 # Optional: If you want to build GAPPS, set this 
-BUILD_GAPPS_COMMAND="source build/envsetup.sh && export BUILD_WITH_GAPPS=true && lunch superior_vayu-userdebug && mka bacon -j$(nproc --all)"
+BUILD_GAPPS_COMMAND="source build/envsetup.sh && export WITH_GAPPS=true && lunch banana_vayu-userdebug && mka m banana"
 
 # Optional: If you have any post command to run after building
 # POST_BUILD_COMMAND=""
 
-ZIP_NAME="SuperiorOS"
+ZIP_NAME="BananaDroid"
 
 # Optional: If you do not want logs
 LOG_OUTPUT=true
