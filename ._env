@@ -68,7 +68,7 @@ BUILD_INSTALL_CLEAN="source build/envsetup.sh && export WITH_GAPPS=false && lunc
 BUILD_VANILLA_COMMAND="source build/envsetup.sh && export WITH_GAPPS=false && lunch banana_vayu-userdebug && m banana"
 
 # Optional: If you want to build GAPPS, set this 
-BUILD_GAPPS_COMMAND="source build/envsetup.sh && export WITH_GAPPS=true && lunch banana_vayu-userdebug && mka m banana"
+BUILD_GAPPS_COMMAND="source build/envsetup.sh && export WITH_GAPPS=true && lunch banana_vayu-userdebug && m banana"
 
 # Optional: If you have any post command to run after building
 # POST_BUILD_COMMAND=""
