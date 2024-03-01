@@ -73,7 +73,7 @@ BUILD_GAPPS_COMMAND="export SKIP_ABI_CHECKS=true && export WITH_GMS=true && sour
 # Optional: If you have any post command to run after building
 # POST_BUILD_COMMAND=""
 
-ZIP_NAME="risingOS"
+ZIP_NAME="rising"
 
 # Optional: If you do not want logs
 LOG_OUTPUT=true
