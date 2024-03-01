@@ -106,7 +106,7 @@ fi
 
 logt "Uploading."
 
-gapps_file=$(ls out/target/product/$DEVICE/rising_vayu-ota-eng.ste.zip | head -n 1)
+gapps_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*-GAPPS-*.zip | head -n 1)
 
 upload_with_rclone "$gapps_file" 
 if [ $? -ne 0 ]; then
