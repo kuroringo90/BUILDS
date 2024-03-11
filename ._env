@@ -50,7 +50,7 @@ RELEASE_OUT_DIR="out/target/product/$DEVICE"
 # PRE_SYNC_SOURCE_COMMAND=""
 
 # Configure rclone remote
-RCLONE_REMOTE=ste
+RCLONE_REMOTE=mom
 
 # Required:
 SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --optimized-fetch --prune --force-sync --force-remove-dirty -j$(nproc --all)"
