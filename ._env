@@ -62,7 +62,7 @@ SYNC_SOURCE_COMMAND="repo sync -c --no-clone-bundle --optimized-fetch --prune --
 # PRE_BUILD_COMMAND=""
 
 # Install clean command
-BUILD_INSTALL_CLEAN="export WITH_GMS=true && source build/envsetup.sh && riseup vayu userdebug && make installclean"
+BUILD_INSTALL_CLEAN="export WITH_GMS=true && source build/envsetup.sh && riseup vayu userdebug && m installclean"
 
 # Vanilla build command 
 #BUILD_VANILLA_COMMAND="export SKIP_ABI_CHECKS=true && export WITH_GMS=false && source build/envsetup.sh && opt_patch && riseup vayu userdebug && ascend"
@@ -73,7 +73,7 @@ BUILD_GAPPS_COMMAND="source build/envsetup.sh && riseup vayu userdebug && rise b
 # Optional: If you have any post command to run after building
 # POST_BUILD_COMMAND=""
 
-ZIP_NAME="risingOS"
+ZIP_NAME="RisingOS"
 
 # Optional: If you do not want logs
 LOG_OUTPUT=true
