@@ -38,20 +38,6 @@ if [[ "$SYNC_FLAG" == "true" ]]; then
     sync_time_taken=$(compute_build_time "$start_time_sync" "$end_time_sync")
     logt "Sync completed in $sync_time_taken"
 fi
-
-# Make install clean to clean old zips
-logt "Cleaning Up..."
-if ls "out/target/product/$DEVICE/$ZIP_NAME"* 1> /dev/null 2>&1; then
-    eval "$BUILD_INSTALL_CLEAN"
-    if [ $? -ne 0 ]; then
-        echo "Install clean failed. Aborting."
-        telegram_send_message "Install clean failed. Aborting."
-        exit 1
-    fi
-else
-    echo "No zip found. Skipping install clean."
-    telegram_send_message "No zip found. Skipping install clean."
-fi
  
     # Build GApps
     # if BUILD_GAPPS_COMMAND is set, otherwise skip
@@ -78,57 +64,17 @@ fi
         echo "BUILD_GAPPS_COMMAND is not set. Skipping GApps build."
     fi
     
-    # Build Vanilla
-    # if BUILD_VANILLA_COMMAND is set, otherwise skip
-    if [ -n "$BUILD_VANILLA_COMMAND" ]; then
-        start_time_vanilla=$(date +%s)
-        logt "Building vanilla..."
-        eval "$BUILD_VANILLA_COMMAND"
-        build_status=$?
-        
-        if [ $build_status -ne 0 ]; then
-            logt "Vanilla build failed. Aborting."
-            telegram_send_file "out/error.log" "Vanilla build log"
-            exit 1
-        fi
-        end_time_vanilla=$(date +%s)
-        vanilla_time_taken=$(compute_build_time "$start_time_vanilla" "$end_time_vanilla")
-        logt "Vanilla build completed in $vanilla_time_taken"
-        remove_ota_package # remove OTA package if present
-        if [ $? -ne 0 ]; then
-            logt "Failed to remove OTA package. Aborting."
-            exit 1
-        fi
-    else
-        echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla build."
-    fi
 
 
 logt "Uploading."
 
-gapps_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*-CORE-*.zip | head -n 1)
+gapps_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*.zip | head -n 1)
 
 upload_with_rclone "$gapps_file" 
 if [ $? -ne 0 ]; then
   logt "Gapps upload failed."
   exit 1  
 fi
-
-    if [ -n "$BUILD_VANILLA_COMMAND" ]; then
-        vanilla_file=$(ls out/target/product/$DEVICE/$ZIP_NAME-*-VANILLA-*.zip 2> /dev/null)
-        
-        if [ -n "$vanilla_file" ]; then
-            upload_with_rclone "$vanilla_file"
-            if [ $? -ne 0 ]; then
-                logt "Vanilla upload failed."
-                exit 1
-            fi  
-        else
-            logt "No vanilla ZIP to upload."  
-        fi
-    else
-        echo "BUILD_VANILLA_COMMAND is not set. Skipping vanilla upload."
-    fi
 
 end_time=$(date +%s)
 # convert seconds to hours, minutes, and seconds
