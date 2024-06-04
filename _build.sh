@@ -4,7 +4,7 @@ source _utils.sh
 source ._env # remove this line if you want environment variables to be set in the shell or use a different method to set them
 
 # Check if required variables are set
-req_vars=("DEVICE" "ROM_NAME" "ZIP_NAME" "GIT_NAME" "RCLONE_REMOTE" "GIT_EMAIL" "REPOS_JSON" "BUILD_INSTALL_CLEAN" "SYNC_SOURCE_COMMAND" "RELEASE_GITHUB_TOKEN" "GITHUB_RELEASE_REPO" "RELEASE_OUT_DIR" "RELEASE_FILES_PATTERN")
+req_vars=("DEVICE" "ROM_NAME" "ZIP_NAME" "GIT_NAME" "RCLONE_REMOTE" "GIT_EMAIL" "REPOS_JSON" "SYNC_SOURCE_COMMAND" "RELEASE_GITHUB_TOKEN" "GITHUB_RELEASE_REPO" "RELEASE_OUT_DIR" "RELEASE_FILES_PATTERN")
 for var in "${req_vars[@]}"; do
     if [ -z "${!var}" ]; then
         echo "Required variable $var is not set. Please set it in ._env"
