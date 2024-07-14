@@ -68,7 +68,7 @@ fi
 
 logt "Uploading."
 # Remove SomethingOS file
-rm -f ./$ZIP_NAME-*-vayu-*-signed-target_files-eng.nobody.zip
+rm -f ./"$ZIP_NAME"-*vayu*signed-target_files-eng.nobody.zip 
 
 gapps_file=$(ls ./$ZIP_NAME-*.zip | head -n 1)
 
